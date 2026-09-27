@@ -14,107 +14,55 @@ frame.addEventListener('load',()=>{
   try{
     const d=frame.contentDocument,w=frame.contentWindow;
     if(!d||!w||!d.getElementById('preview'))return;
-    const $=id=>d.getElementById(id);
-    const preview=$('preview');
     const home=d.querySelector('a[href="./"]');if(home)home.target='_top';
     const notice=d.querySelector('#maskPane .notice');
-    if(notice)notice.innerHTML='<b>✏️ ペン：</b>隠したい文字を指でなぞるだけ。<b>↕ スクロール：</b>上下に移動。黒塗り済み部分はタップで解除できます。';
-
+    if(notice)notice.textContent='本文を指やマウスで選ぶと、その場所に「黒塗り／解除」が出ます。選んだ文字を確認して、そのまま操作できます。既存の黒塗りはクリックでも解除できます。';
     const style=d.createElement('style');
-    style.textContent=`
-      #preview.paint-mode{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;touch-action:none;cursor:crosshair}
-      #preview.scroll-mode{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;touch-action:pan-y;cursor:default}
-      #preview .masked{cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-      #preview .masked:active{outline:3px solid #d36a78;outline-offset:1px}
-      ::highlight(noriben-paint){background:#a9dfc8;color:#10251e;text-decoration:underline 2px #126b4c}
-      .paint-switch{display:inline-flex;border:1px solid #b8c7d3;border-radius:9px;overflow:hidden;background:#fff}
-      .paint-switch button{border:0;border-right:1px solid #d4dde5;background:#fff;padding:8px 11px;min-height:40px;font-weight:750;color:#334154}
-      .paint-switch button:last-child{border-right:0}.paint-switch button.active{background:#126b4c;color:#fff}
-      .paint-help{font-size:12px;color:#5d6b7e;margin-left:2px}
-      @media(max-width:760px){.paint-switch{width:100%}.paint-switch button{flex:1}.paint-help{width:100%;margin-top:2px}.toolbar .legacy-selection-v5{display:none!important}}
-    `;
+    style.textContent=`.masked{cursor:pointer}.masked:hover{outline:2px solid #c56872;outline-offset:1px}.selection-menu-v3{position:fixed;z-index:9999;display:flex;align-items:center;gap:7px;max-width:min(92vw,560px);padding:8px;background:#172436;color:#fff;border-radius:10px;box-shadow:0 10px 35px #0004;user-select:none;-webkit-user-select:none}.selection-menu-v3[hidden]{display:none!important}.selection-menu-v3 .sel-excerpt{max-width:250px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#dfe7ee;padding:0 4px}.selection-menu-v3 .btn{min-height:36px;padding:6px 11px;border-color:#526171}.selection-menu-v3 .btn.primary{border-color:#126b4c}.selection-menu-v3 .btn.danger{background:#fff;color:#ad3042}@media(max-width:760px){.selection-menu-v3{max-width:calc(100vw - 16px);gap:5px;padding:6px}.selection-menu-v3 .sel-excerpt{max-width:130px}.selection-menu-v3 .btn{min-height:38px;padding:6px 9px;font-size:13px}}`;
     d.head.append(style);
-
-    const oldMask=$('maskSelection'),oldUnmask=$('unmaskSelection');
-    if(oldMask)oldMask.classList.add('legacy-selection-v5');
-    if(oldUnmask)oldUnmask.classList.add('legacy-selection-v5');
-
-    const toolbar=d.querySelector('#maskPane .toolbar');
-    const sw=d.createElement('div');sw.className='paint-switch';
-    sw.innerHTML='<button type="button" id="paintModeV5" class="active">✏️ 黒塗りペン</button><button type="button" id="scrollModeV5">↕ スクロール</button>';
-    const help=d.createElement('span');help.className='paint-help';help.id='paintHelpV5';help.textContent='指でなぞると黒塗り';
-    toolbar.prepend(help);toolbar.prepend(sw);
-    const paintBtn=$('paintModeV5'),scrollBtn=$('scrollModeV5');
-
-    let mode='paint',drawing=false,pointerId=null,anchor=-1,focus=-1,raf=0,lastXY=null;
-    let textNodes=[],nodeStarts=new Map(),totalLength=0;
-    const supportsHighlight=!!(w.CSS&&w.CSS.highlights&&w.Highlight);
-    const originalRender=w.renderPreview;
-
-    function buildTextMap(){
-      textNodes=[];nodeStarts=new Map();totalLength=0;
-      const walker=d.createTreeWalker(preview,NodeFilter.SHOW_TEXT);
-      let n;while((n=walker.nextNode())){nodeStarts.set(n,totalLength);textNodes.push(n);totalLength+=(n.nodeValue||'').length}
-      [...preview.querySelectorAll('.masked')].forEach(m=>{
-        const r=d.createRange();r.selectNodeContents(preview);r.setEndBefore(m);
-        const start=r.toString().length;m.dataset.start=String(start);m.dataset.end=String(start+(m.textContent||'').length);m.title='タップでこの黒塗りを解除';
+    const menu=d.createElement('div');menu.id='selectionMenuV3';menu.className='selection-menu-v3';menu.hidden=true;
+    menu.innerHTML='<span class="sel-excerpt" id="selectionExcerptV3"></span><button class="btn primary" id="quickMaskV3" type="button">黒塗り</button><button class="btn danger" id="quickUnmaskV3" type="button" hidden>解除</button>';
+    d.body.append(menu);
+    const preview=d.getElementById('preview'),excerpt=d.getElementById('selectionExcerptV3'),quickMask=d.getElementById('quickMaskV3'),quickUnmask=d.getElementById('quickUnmaskV3');
+    let selected=null,timer=null;
+    const masks=()=>{try{return w.current()?.masks||[]}catch(e){return[]}};
+    function hide(){menu.hidden=true;selected=null}
+    function locate(){
+      const sel=w.getSelection();
+      if(!sel||!sel.rangeCount||sel.isCollapsed){hide();return}
+      const r=sel.getRangeAt(0);
+      if(!preview.contains(r.startContainer)||!preview.contains(r.endContainer)){hide();return}
+      const before=d.createRange();before.selectNodeContents(preview);before.setEnd(r.startContainer,r.startOffset);
+      let start=before.toString().length,end=start+r.toString().length;
+      const body=w.current()?.body||'';
+      while(start<end&&/\s/.test(body[start]))start++;
+      while(end>start&&/\s/.test(body[end-1]))end--;
+      if(start>=end){hide();return}
+      selected={start,end};
+      const txt=body.slice(start,end).replace(/\s+/g,' ');
+      excerpt.textContent='「'+txt.slice(0,34)+(txt.length>34?'…':'')+'」';
+      quickUnmask.hidden=!masks().some(m=>m.start<end&&m.end>start);
+      menu.hidden=false;
+      requestAnimationFrame(()=>{
+        const rr=r.getBoundingClientRect(),mw=menu.offsetWidth,mh=menu.offsetHeight,margin=8;
+        let left=Math.max(margin,Math.min(w.innerWidth-mw-margin,rr.left+(rr.width-mw)/2));
+        let top=rr.bottom+8;if(top+mh>w.innerHeight-margin)top=Math.max(margin,rr.top-mh-8);
+        menu.style.left=Math.round(left)+'px';menu.style.top=Math.round(top)+'px';
       });
     }
-    function clearPaintHighlight(){if(supportsHighlight)w.CSS.highlights.delete('noriben-paint')}
-    function domPointAtOffset(offset){
-      offset=Math.max(0,Math.min(totalLength,offset));
-      for(const n of textNodes){const start=nodeStarts.get(n),len=(n.nodeValue||'').length;if(offset<=start+len)return [n,Math.max(0,offset-start)]}
-      const n=textNodes[textNodes.length-1];return n?[n,(n.nodeValue||'').length]:null;
-    }
-    function showRange(start,end){
-      if(!supportsHighlight)return;
-      clearPaintHighlight();if(start<0||end<=start)return;
-      const a=domPointAtOffset(start),b=domPointAtOffset(end);if(!a||!b)return;
-      const r=d.createRange();try{r.setStart(a[0],a[1]);r.setEnd(b[0],b[1]);w.CSS.highlights.set('noriben-paint',new w.Highlight(r))}catch(_){ }
-    }
-    function pointToOffset(x,y){
-      let node=null,off=0;
-      if(d.caretPositionFromPoint){const p=d.caretPositionFromPoint(x,y);if(p){node=p.offsetNode;off=p.offset}}
-      else if(d.caretRangeFromPoint){const r=d.caretRangeFromPoint(x,y);if(r){node=r.startContainer;off=r.startOffset}}
-      if(!node)return null;
-      if(node.nodeType!==Node.TEXT_NODE){
-        const walker=d.createTreeWalker(node,NodeFilter.SHOW_TEXT);node=walker.nextNode();off=0;
-      }
-      if(!node||!nodeStarts.has(node))return null;
-      return nodeStarts.get(node)+Math.min(off,(node.nodeValue||'').length);
-    }
-    function setMode(next){mode=next;drawing=false;anchor=focus=-1;clearPaintHighlight();preview.classList.toggle('paint-mode',mode==='paint');preview.classList.toggle('scroll-mode',mode==='scroll');paintBtn.classList.toggle('active',mode==='paint');scrollBtn.classList.toggle('active',mode==='scroll');help.textContent=mode==='paint'?'指でなぞると黒塗り':'上下にスワイプして移動'}
-    paintBtn.onclick=()=>setMode('paint');scrollBtn.onclick=()=>setMode('scroll');
-
-    w.renderPreview=function(){originalRender();buildTextMap();setMode(mode)};
-    buildTextMap();setMode('paint');
-
-    function removeMaskBySpan(el){const q=w.current?.();if(!q)return;const start=Number(el.dataset.start),end=Number(el.dataset.end);const i=q.masks.findIndex(m=>m.start===start&&m.end===end);if(i<0)return;q.masks.splice(i,1);w.renderPreview();w.renderList();w.scheduleSave();w.toast('黒塗りを解除しました')}
-
-    preview.addEventListener('pointerdown',e=>{
-      if(e.target.closest?.('.masked'))return;if(mode!=='paint')return;
-      const i=pointToOffset(e.clientX,e.clientY);if(i==null)return;
-      e.preventDefault();drawing=true;pointerId=e.pointerId;anchor=focus=i;
-      try{preview.setPointerCapture(e.pointerId)}catch(_){ }
-      showRange(i,i+1);
-    },{passive:false});
-
-    preview.addEventListener('pointermove',e=>{
-      if(!drawing||e.pointerId!==pointerId||mode!=='paint')return;e.preventDefault();lastXY=[e.clientX,e.clientY];
-      if(raf)return;raf=w.requestAnimationFrame(()=>{raf=0;if(!lastXY)return;const i=pointToOffset(lastXY[0],lastXY[1]);if(i==null||i===focus)return;focus=i;showRange(Math.min(anchor,focus),Math.max(anchor,focus)+1)});
-    },{passive:false});
-
-    function finishPaint(e){
-      if(!drawing||e.pointerId!==pointerId)return;e.preventDefault();drawing=false;
-      if(raf){w.cancelAnimationFrame(raf);raf=0}lastXY=null;
-      try{preview.releasePointerCapture(e.pointerId)}catch(_){ }
-      if(anchor>=0&&focus>=0){let start=Math.min(anchor,focus),end=Math.max(anchor,focus)+1;const body=w.current?.().body||'';while(start<end&&/\s/.test(body[start]))start++;while(end>start&&/\s/.test(body[end-1]))end--;clearPaintHighlight();anchor=focus=-1;if(start<end)w.addMask(start,end)}
-    }
-    preview.addEventListener('pointerup',finishPaint,{passive:false});
-    preview.addEventListener('pointercancel',e=>{if(e.pointerId===pointerId){drawing=false;clearPaintHighlight();anchor=focus=-1}}, {passive:true});
-    preview.addEventListener('click',e=>{const m=e.target.closest?.('.masked');if(!m)return;e.preventDefault();e.stopPropagation();removeMaskBySpan(m)},true);
-    preview.addEventListener('selectstart',e=>e.preventDefault());
-    preview.addEventListener('contextmenu',e=>{if(mode==='paint')e.preventDefault()});
+    function schedule(ms=80){clearTimeout(timer);timer=setTimeout(locate,ms)}
+    preview.addEventListener('mouseup',()=>schedule(20));
+    preview.addEventListener('touchend',()=>schedule(130));
+    preview.addEventListener('keyup',()=>schedule(20));
+    d.addEventListener('selectionchange',()=>{const sel=w.getSelection();if(sel&&sel.rangeCount&&preview.contains(sel.anchorNode))schedule(90)});
+    [quickMask,quickUnmask].forEach(b=>b.addEventListener('pointerdown',e=>e.preventDefault()));
+    quickMask.addEventListener('click',()=>{if(!selected)return;const {start,end}=selected;hide();w.addMask(start,end)});
+    quickUnmask.addEventListener('click',()=>{if(!selected)return;const {start,end}=selected;hide();w.unmaskSelected(start,end)});
+    function decorate(){preview.querySelectorAll('.masked').forEach((el,i)=>{el.dataset.maskIndex=String(i);el.tabIndex=0;el.title='クリックでこの黒塗りを解除'})}
+    const ob=new MutationObserver(decorate);ob.observe(preview,{childList:true,subtree:true});decorate();
+    function removeMask(el){const i=Number(el.dataset.maskIndex);const q=w.current();if(!q||!Number.isInteger(i)||i<0||i>=q.masks.length)return;q.masks.splice(i,1);hide();w.getSelection()?.removeAllRanges();w.renderPreview();w.renderList();w.scheduleSave();w.toast('黒塗りを解除しました')}
+    preview.addEventListener('click',e=>{const el=e.target.closest('.masked');const sel=w.getSelection();if(el&&(!sel||sel.isCollapsed))removeMask(el)});
+    preview.addEventListener('keydown',e=>{const el=e.target.closest('.masked');if(el&&(e.key==='Enter'||e.key===' ')){e.preventDefault();removeMask(el)}});
   }catch(e){console.error(e)}
 });
 </script>
