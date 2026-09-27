@@ -12,25 +12,43 @@
 const frame=document.getElementById('app');
 frame.addEventListener('load',()=>{
   try{
-    const d=frame.contentDocument;
+    const d=frame.contentDocument,w=frame.contentWindow;
     const actions=d.querySelector('.topactions');
     if(actions && !d.getElementById('homeBtn')){
-      const home=d.createElement('a');
-      home.id='homeBtn';
-      home.className='btn';
-      home.href='./';
-      home.textContent='← トップ';
-      actions.prepend(home);
+      const home=d.createElement('a');home.id='homeBtn';home.className='btn';home.href='./';home.target='_top';home.textContent='← トップ';actions.prepend(home);
     }
     const backup=d.getElementById('backupBtn');
-    if(backup){
-      backup.textContent='バックアップJSONを保存';
-      backup.title='読み込んだ教材と、各論証の「覚えた／間違えた」学習記録をJSONで保存します。普段はブラウザーに自動保存されるため、端末移行やデータ消失対策用です。';
-    }
+    if(backup){backup.textContent='バックアップJSONを保存';backup.title='端末内の全教材と学習記録をJSONで保存します。';}
     const help=d.querySelector('.helpbox p');
-    if(help){
-      help.textContent='読み込んだ教材と学習記録は、このブラウザーに自動保存されます。「バックアップJSONを保存」は端末移行やデータ消失対策用です。';
+    if(help)help.textContent='読み込んだ教材と学習記録は、このホーム画面アプリ内に自動保存されます。Safariとは保存領域が別です。';
+
+    // 同じIDでも別内容の教材を誤って上書きしない。
+    const originalMerge=w.mergeDeck;
+    if(typeof originalMerge==='function'){
+      w.mergeDeck=function(deck){
+        const decks=w.state?.decks;
+        if(!Array.isArray(decks))return originalMerge(deck);
+        const sameId=decks.find(x=>x.id===deck.id);
+        if(!sameId){decks.push(deck);return deck;}
+        const sameStructure=sameId.title===deck.title && sameId.questions?.length===deck.questions?.length && sameId.questions?.every((q,i)=>q.id===deck.questions?.[i]?.id);
+        if(sameStructure){const i=decks.indexOf(sameId);decks[i]=deck;return deck;}
+        const base=deck.id||'deck';let n=2,newId=base+'--'+n;
+        while(decks.some(x=>x.id===newId)){n++;newId=base+'--'+n}
+        const copy={...deck,id:newId};decks.push(copy);return copy;
+      };
     }
+
+    function updateLibraryLabel(){
+      const count=Array.isArray(w.state?.decks)?w.state.decks.length:0;
+      const toggle=d.getElementById('toggleLibrary');
+      if(toggle){toggle.childNodes[0].nodeValue='教材一覧（'+count+'冊） ';const s=toggle.querySelector('span');if(s&&!s.textContent)s.textContent='開く ＋';}
+      const label=d.querySelector('label[for="deckSelect"]');if(label)label.textContent='保存済み教材（'+count+'冊）';
+    }
+    if(typeof w.renderDeckSelect==='function'){
+      const originalRenderDeckSelect=w.renderDeckSelect;
+      w.renderDeckSelect=function(){originalRenderDeckSelect();updateLibraryLabel()};
+    }
+    updateLibraryLabel();
   }catch(e){console.error(e)}
 });
 </script>
