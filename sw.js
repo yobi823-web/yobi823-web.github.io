@@ -1,4 +1,4 @@
-const CACHE = 'ronsho-pwa-20260927-v1';
+const CACHE = 'ronsho-pwa-20260927-v2';
 const CORE = [
   './',
   './index.html',
