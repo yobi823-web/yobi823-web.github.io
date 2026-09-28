@@ -23,7 +23,6 @@ frame.addEventListener('load',()=>{
     const help=d.querySelector('.helpbox p');
     if(help)help.textContent='読み込んだ教材と学習記録は、このホーム画面アプリ内に自動保存されます。Safariとは保存領域が別です。';
 
-    // 同じIDでも明らかに別教材なら、別冊として保存する。
     const originalMerge=w.mergeDeck;
     if(typeof originalMerge==='function'){
       w.mergeDeck=function(deck){
@@ -42,7 +41,7 @@ frame.addEventListener('load',()=>{
     function updateLibraryLabel(){
       const count=getState()?.decks?.length||0;
       const toggle=d.getElementById('toggleLibrary');
-      if(toggle){toggle.childNodes[0].nodeValue='教材一覧（'+count+'冊） ';}
+      if(toggle)toggle.childNodes[0].nodeValue='教材一覧（'+count+'冊） ';
       const label=d.querySelector('label[for="deckSelect"]');if(label)label.textContent='保存済み教材（'+count+'冊）';
     }
     if(typeof w.renderDeckSelect==='function'){
@@ -53,11 +52,12 @@ frame.addEventListener('load',()=>{
 
     async function ensureBuiltInMinpo(){
       try{
-        const res=await fetch('./decks/minpo-sosoku.json.gz');
-        if(!res.ok)throw new Error('民法総則データを取得できませんでした');
         if(typeof DecompressionStream!=='function')throw new Error('この環境は内蔵教材の展開に対応していません');
-        const stream=res.body.pipeThrough(new DecompressionStream('gzip'));
-        const raw=JSON.parse(await new Response(stream).text());
+        const urls=['./decks/minpo-sosoku.b64.1','./decks/minpo-sosoku.b64.2','./decks/minpo-sosoku.b64.3'];
+        const parts=await Promise.all(urls.map(async url=>{const r=await fetch(url);if(!r.ok)throw new Error('民法総則データを取得できませんでした');return (await r.text()).trim()}));
+        const bin=atob(parts.join(''));const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+        const text=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+        const raw=JSON.parse(text);
         const deck=typeof w.validateDeck==='function'?w.validateDeck(raw):raw;
         const state=getState();
         if(!state||!Array.isArray(state.decks))return;
