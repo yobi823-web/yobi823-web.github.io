@@ -50,6 +50,37 @@ frame.addEventListener('load',()=>{
       w.renderDeckSelect=function(){originalRenderDeckSelect();updateLibraryLabel()};
     }
     updateLibraryLabel();
+
+    async function ensureBuiltInMinpo(){
+      try{
+        const res=await fetch('./decks/minpo-sosoku.json.gz');
+        if(!res.ok)throw new Error('民法総則データを取得できませんでした');
+        if(typeof DecompressionStream!=='function')throw new Error('この環境は内蔵教材の展開に対応していません');
+        const stream=res.body.pipeThrough(new DecompressionStream('gzip'));
+        const raw=JSON.parse(await new Response(stream).text());
+        const deck=typeof w.validateDeck==='function'?w.validateDeck(raw):raw;
+        const state=getState();
+        if(!state||!Array.isArray(state.decks))return;
+        const idx=state.decks.findIndex(x=>x.id===deck.id);
+        let changed=false;
+        if(idx<0){state.decks.push(deck);changed=true;}
+        else{
+          const old=state.decks[idx];
+          const oldMasks=(old.questions||[]).reduce((n,q)=>n+(q.masks?.length||0),0);
+          const newMasks=(deck.questions||[]).reduce((n,q)=>n+(q.masks?.length||0),0);
+          if(old.title!==deck.title||old.questions?.length!==deck.questions?.length||oldMasks!==newMasks){state.decks[idx]=deck;changed=true;}
+        }
+        if(!state.activeDeckId){state.activeDeckId=deck.id;state.activeQuestionId='';}
+        if(changed){
+          if(typeof w.renderDeckSelect==='function')w.renderDeckSelect();
+          if(state.activeDeckId===deck.id&&typeof w.renderSubjects==='function')w.renderSubjects();
+          if(state.activeDeckId===deck.id&&typeof w.refreshFilters==='function')w.refreshFilters(true);else if(typeof w.save==='function')w.save();
+          updateLibraryLabel();
+          if(typeof w.toast==='function')w.toast('内蔵教材「民法総則」を追加しました。');
+        }
+      }catch(e){console.error('built-in deck:',e);}
+    }
+    ensureBuiltInMinpo();
   }catch(e){console.error(e)}
 });
 </script>
