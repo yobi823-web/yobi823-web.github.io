@@ -1,4 +1,4 @@
-const CACHE = 'ronsho-pwa-20260928-v4';
+const CACHE = 'ronsho-pwa-20260928-v5';
 const CORE = [
   './',
   './index.html',
@@ -8,7 +8,9 @@ const CORE = [
   './noriben-base.html',
   './manifest.webmanifest',
   './pwa.js',
-  './decks/minpo-sosoku.json.gz',
+  './decks/minpo-sosoku.b64.1',
+  './decks/minpo-sosoku.b64.2',
+  './decks/minpo-sosoku.b64.3',
   './apple-touch-icon.png',
   './icon-192.png',
   './icon-512.png'
