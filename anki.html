@@ -14,14 +14,65 @@ frame.addEventListener('load',()=>{
   try{
     const d=frame.contentDocument,w=frame.contentWindow;
     const getState=()=>{try{return w.eval('state')}catch(_){return null}};
+    const getActiveDeck=()=>{const s=getState();return s?.decks?.find(x=>x.id===s.activeDeckId)||null};
+    const getActiveQuestion=()=>{const s=getState(),deck=getActiveDeck();return deck?.questions?.find(q=>q.id===s?.activeQuestionId)||null};
+    const BUILTIN_IDS=new Set(['minpo-sosoku-ronsho-20260927']);
+    let editMode=false,selectionTimer=null,selectedRange=null;
+
+    const style=d.createElement('style');
+    style.textContent=`
+      .anki-edit-mode .gradebar{display:none!important}
+      .anki-edit-mode #showAll,.anki-edit-mode #hideAll,.anki-edit-mode #revealCount{display:none!important}
+      .anki-edit-mode #studyBody{user-select:text!important;-webkit-user-select:text!important;-webkit-touch-callout:default!important;cursor:text}
+      .edit-toolbar{display:none;margin:0 0 14px;padding:11px 13px;border:1px solid #d6b35f;background:#fff8df;border-radius:10px;color:#604911;font-size:14px;line-height:1.6}
+      .anki-edit-mode .edit-toolbar{display:block}
+      .edit-mask{background:#ffe08a;color:#172436;border-radius:3px;box-shadow:inset 0 -2px 0 #d3a324;cursor:pointer;padding:1px 0}
+      .edit-mask:active{outline:2px solid #b52e3f;outline-offset:1px}
+      .selection-menu-v7{position:fixed;z-index:10000;display:flex;align-items:center;gap:7px;max-width:min(92vw,520px);padding:8px;background:#172436;color:#fff;border-radius:10px;box-shadow:0 10px 35px #0004;user-select:none;-webkit-user-select:none}
+      .selection-menu-v7[hidden]{display:none!important}
+      .selection-menu-v7 .excerpt{max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;color:#dfe7ee;padding:0 4px}
+      .deck-manage-row{display:flex;gap:8px;margin-top:8px}.deck-manage-row .btn{flex:1}
+      @media(max-width:700px){.selection-menu-v7{max-width:calc(100vw - 16px);padding:6px}.selection-menu-v7 .excerpt{max-width:150px}.topactions #editModeBtn{order:4;flex-basis:100%}}
+    `;
+    d.head.append(style);
+
     const actions=d.querySelector('.topactions');
     if(actions && !d.getElementById('homeBtn')){
       const home=d.createElement('a');home.id='homeBtn';home.className='btn';home.href='./';home.target='_top';home.textContent='← トップ';actions.prepend(home);
     }
+    if(actions && !d.getElementById('editModeBtn')){
+      const edit=d.createElement('button');edit.id='editModeBtn';edit.className='btn';edit.type='button';edit.textContent='黒塗りを編集';actions.append(edit);
+    }
     const backup=d.getElementById('backupBtn');
     if(backup){backup.textContent='バックアップJSONを保存';backup.title='端末内の全教材と学習記録をJSONで保存します。';}
-    const help=d.querySelector('.helpbox p');
-    if(help)help.textContent='読み込んだ教材と学習記録は、このホーム画面アプリ内に自動保存されます。Safariとは保存領域が別です。';
+    const brandSub=d.querySelector('.brand p');if(brandSub)brandSub.textContent='論証を作る・覚える';
+    const help=d.querySelector('.helpbox');
+    if(help){
+      const summary=help.querySelector('summary');if(summary)summary.textContent='使い方・保存';
+      const ol=help.querySelector('ol');if(ol)ol.innerHTML='<li>JSONを読み込むと教材一覧に保存されます。</li><li>「黒塗りを編集」で本文を選択して黒塗りを追加できます。</li><li>学習モードでは黒塗りをタップして答えを確認します。</li><li>「間違えた」「覚えた」で学習結果を記録します。</li>';
+      const p=help.querySelector('p');if(p)p.textContent='教材・黒塗り・学習記録は、このホーム画面アプリ内に自動保存されます。';
+    }
+    const welcomeText=d.querySelector('#welcome > p');if(welcomeText)welcomeText.textContent='教材JSONを読み込むか、保存済み教材を開いて学習できます。黒塗り編集もこの画面で行えます。';
+
+    const studyBody=d.getElementById('studyBody');
+    if(studyBody && !d.getElementById('editToolbar')){
+      const bar=d.createElement('div');bar.id='editToolbar';bar.className='edit-toolbar';bar.innerHTML='<b>編集モード：</b>隠したい文字を選択すると「黒塗り」が出ます。黄色の箇所は黒塗り済みで、タップすると解除できます。';
+      studyBody.before(bar);
+    }
+
+    const selectionMenu=d.createElement('div');selectionMenu.id='selectionMenuV7';selectionMenu.className='selection-menu-v7';selectionMenu.hidden=true;
+    selectionMenu.innerHTML='<span class="excerpt" id="selectionExcerptV7"></span><button class="btn primary small" id="addMaskV7" type="button">黒塗り</button>';
+    d.body.append(selectionMenu);
+    const selectionExcerpt=d.getElementById('selectionExcerptV7'),addMaskBtn=d.getElementById('addMaskV7');
+
+    const deckSelect=d.getElementById('deckSelect');
+    const deckField=deckSelect?.closest('.field');
+    if(deckField && !d.getElementById('deleteDeckBtn')){
+      const row=d.createElement('div');row.className='deck-manage-row';
+      const del=d.createElement('button');del.id='deleteDeckBtn';del.type='button';del.className='btn danger small';del.textContent='この教材を削除';
+      row.append(del);deckField.append(row);
+    }
+    const deleteDeckBtn=d.getElementById('deleteDeckBtn');
 
     const originalMerge=w.mergeDeck;
     if(typeof originalMerge==='function'){
@@ -43,11 +94,94 @@ frame.addEventListener('load',()=>{
       const toggle=d.getElementById('toggleLibrary');
       if(toggle)toggle.childNodes[0].nodeValue='教材一覧（'+count+'冊） ';
       const label=d.querySelector('label[for="deckSelect"]');if(label)label.textContent='保存済み教材（'+count+'冊）';
+      updateDeleteButton();
+    }
+    function updateDeleteButton(){
+      if(!deleteDeckBtn)return;
+      const deck=getActiveDeck();
+      if(!deck){deleteDeckBtn.disabled=true;deleteDeckBtn.textContent='この教材を削除';return}
+      if(BUILTIN_IDS.has(deck.id)){deleteDeckBtn.disabled=true;deleteDeckBtn.textContent='内蔵教材（削除不可）';return}
+      deleteDeckBtn.disabled=false;deleteDeckBtn.textContent='この教材を削除';
     }
     if(typeof w.renderDeckSelect==='function'){
       const originalRenderDeckSelect=w.renderDeckSelect;
       w.renderDeckSelect=function(){originalRenderDeckSelect();updateLibraryLabel()};
     }
+
+    function hideSelectionMenu(){selectionMenu.hidden=true;selectedRange=null}
+    function renderEditBody(){
+      if(!editMode||!studyBody)return;
+      const q=getActiveQuestion();hideSelectionMenu();if(!q)return;
+      q.masks=(q.masks||[]).slice().sort((a,b)=>a.start-b.start);
+      studyBody.replaceChildren();let pos=0;
+      q.masks.forEach((m,i)=>{
+        studyBody.append(d.createTextNode(q.body.slice(pos,m.start)));
+        const span=d.createElement('span');span.className='edit-mask';span.dataset.editMask=String(i);span.textContent=q.body.slice(m.start,m.end);span.title='タップで黒塗り解除';studyBody.append(span);pos=m.end;
+      });
+      studyBody.append(d.createTextNode(q.body.slice(pos)));
+    }
+
+    const originalRenderStudy=w.renderStudy;
+    if(typeof originalRenderStudy==='function'){
+      w.renderStudy=function(){originalRenderStudy();if(editMode)renderEditBody();updateDeleteButton()};
+    }
+
+    function setEditMode(on){
+      editMode=!!on;d.body.classList.toggle('anki-edit-mode',editMode);hideSelectionMenu();w.getSelection()?.removeAllRanges();
+      const btn=d.getElementById('editModeBtn');if(btn){btn.textContent=editMode?'学習モードに戻る':'黒塗りを編集';btn.classList.toggle('primary',editMode)}
+      if(typeof w.renderStudy==='function')w.renderStudy();
+    }
+    d.getElementById('editModeBtn')?.addEventListener('click',()=>setEditMode(!editMode));
+
+    function locateSelection(){
+      if(!editMode||!studyBody){hideSelectionMenu();return}
+      const sel=w.getSelection();if(!sel||!sel.rangeCount||sel.isCollapsed){hideSelectionMenu();return}
+      const r=sel.getRangeAt(0);if(!studyBody.contains(r.startContainer)||!studyBody.contains(r.endContainer)){hideSelectionMenu();return}
+      const q=getActiveQuestion();if(!q){hideSelectionMenu();return}
+      const before=d.createRange();before.selectNodeContents(studyBody);before.setEnd(r.startContainer,r.startOffset);
+      let start=before.toString().length,end=start+r.toString().length;
+      while(start<end&&/\s/.test(q.body[start]))start++;
+      while(end>start&&/\s/.test(q.body[end-1]))end--;
+      if(start>=end){hideSelectionMenu();return}
+      selectedRange={start,end};const txt=q.body.slice(start,end).replace(/\s+/g,' ');
+      selectionExcerpt.textContent='「'+txt.slice(0,42)+(txt.length>42?'…':'')+'」';selectionMenu.hidden=false;
+      requestAnimationFrame(()=>{
+        const rr=r.getBoundingClientRect(),mw=selectionMenu.offsetWidth,mh=selectionMenu.offsetHeight,margin=8;
+        let left=Math.max(margin,Math.min(w.innerWidth-mw-margin,rr.left+(rr.width-mw)/2));
+        let top=rr.bottom+8;if(top+mh>w.innerHeight-margin)top=Math.max(margin,rr.top-mh-8);
+        selectionMenu.style.left=Math.round(left)+'px';selectionMenu.style.top=Math.round(top)+'px';
+      });
+    }
+    function scheduleSelection(ms=80){clearTimeout(selectionTimer);selectionTimer=setTimeout(locateSelection,ms)}
+    studyBody?.addEventListener('mouseup',()=>scheduleSelection(20));
+    studyBody?.addEventListener('touchend',()=>scheduleSelection(130));
+    d.addEventListener('selectionchange',()=>{if(!editMode)return;const sel=w.getSelection();if(sel&&sel.rangeCount&&studyBody?.contains(sel.anchorNode))scheduleSelection(90)});
+    addMaskBtn.addEventListener('pointerdown',e=>e.preventDefault());
+    addMaskBtn.addEventListener('click',()=>{
+      if(!editMode||!selectedRange)return;
+      const q=getActiveQuestion(),deck=getActiveDeck();if(!q||!deck)return;
+      const {start,end}=selectedRange;const list=[...(q.masks||[]),{start,end,text:q.body.slice(start,end)}].sort((a,b)=>a.start-b.start);
+      const merged=[];for(const m of list){const last=merged[merged.length-1];if(last&&m.start<last.end){last.end=Math.max(last.end,m.end);last.text=q.body.slice(last.start,last.end)}else merged.push({start:m.start,end:m.end,text:q.body.slice(m.start,m.end)})}
+      q.masks=merged;deck.updatedAt=new Date().toISOString();hideSelectionMenu();w.getSelection()?.removeAllRanges();w.save?.();w.renderList?.();w.renderStudy?.();w.toast?.('黒塗りを追加しました');
+    });
+    studyBody?.addEventListener('click',e=>{
+      if(!editMode)return;const el=e.target.closest?.('[data-edit-mask]');if(!el)return;
+      const sel=w.getSelection();if(sel&&!sel.isCollapsed)return;
+      const q=getActiveQuestion(),deck=getActiveDeck();const i=Number(el.dataset.editMask);if(!q||!deck||!Number.isInteger(i)||i<0||i>=q.masks.length)return;
+      q.masks.splice(i,1);deck.updatedAt=new Date().toISOString();w.save?.();w.renderList?.();w.renderStudy?.();w.toast?.('黒塗りを解除しました');
+    },true);
+
+    deleteDeckBtn?.addEventListener('click',()=>{
+      const state=getState(),deck=getActiveDeck();if(!state||!deck||BUILTIN_IDS.has(deck.id))return;
+      if(!w.confirm('「'+deck.title+'」をこの端末から削除しますか？\nこの教材の学習記録も削除されます。'))return;
+      state.decks=state.decks.filter(x=>x.id!==deck.id);
+      for(const [key,value] of Object.entries(state.progress||{})){if(value?.deckId===deck.id)delete state.progress[key]}
+      state.activeDeckId=state.decks[0]?.id||'';state.activeQuestionId='';
+      try{w.eval("filterSubject='';filterSearch='';filterWrong=false;")}catch(_){ }
+      const search=d.getElementById('search');if(search)search.value='';const wrong=d.getElementById('wrongOnly');if(wrong)wrong.checked=false;
+      setEditMode(false);w.renderDeckSelect?.();w.renderSubjects?.();w.refreshFilters?.(true);w.save?.();updateLibraryLabel();w.toast?.('教材を削除しました');
+    });
+
     updateLibraryLabel();
 
     async function ensureBuiltInMinpo(){
@@ -59,26 +193,15 @@ frame.addEventListener('load',()=>{
         const text=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
         const raw=JSON.parse(text);
         const deck=typeof w.validateDeck==='function'?w.validateDeck(raw):raw;
-        const state=getState();
-        if(!state||!Array.isArray(state.decks))return;
-        const idx=state.decks.findIndex(x=>x.id===deck.id);
-        let changed=false;
-        if(idx<0){state.decks.push(deck);changed=true;}
-        else{
-          const old=state.decks[idx];
-          const oldMasks=(old.questions||[]).reduce((n,q)=>n+(q.masks?.length||0),0);
-          const newMasks=(deck.questions||[]).reduce((n,q)=>n+(q.masks?.length||0),0);
-          if(old.title!==deck.title||old.questions?.length!==deck.questions?.length||oldMasks!==newMasks){state.decks[idx]=deck;changed=true;}
+        const state=getState();if(!state||!Array.isArray(state.decks))return;
+        const idx=state.decks.findIndex(x=>x.id===deck.id);let changed=false;
+        if(idx<0){state.decks.push(deck);changed=true}else{
+          const old=state.decks[idx],oldMasks=(old.questions||[]).reduce((n,q)=>n+(q.masks?.length||0),0),newMasks=(deck.questions||[]).reduce((n,q)=>n+(q.masks?.length||0),0);
+          if(old.title!==deck.title||old.questions?.length!==deck.questions?.length||oldMasks!==newMasks){state.decks[idx]=deck;changed=true}
         }
-        if(!state.activeDeckId){state.activeDeckId=deck.id;state.activeQuestionId='';}
-        if(changed){
-          if(typeof w.renderDeckSelect==='function')w.renderDeckSelect();
-          if(state.activeDeckId===deck.id&&typeof w.renderSubjects==='function')w.renderSubjects();
-          if(state.activeDeckId===deck.id&&typeof w.refreshFilters==='function')w.refreshFilters(true);else if(typeof w.save==='function')w.save();
-          updateLibraryLabel();
-          if(typeof w.toast==='function')w.toast('内蔵教材「民法総則」を追加しました。');
-        }
-      }catch(e){console.error('built-in deck:',e);}
+        if(!state.activeDeckId){state.activeDeckId=deck.id;state.activeQuestionId=''}
+        if(changed){w.renderDeckSelect?.();if(state.activeDeckId===deck.id){w.renderSubjects?.();w.refreshFilters?.(true)}else w.save?.();updateLibraryLabel();w.toast?.('内蔵教材「民法総則」を追加しました。')}
+      }catch(e){console.error('built-in deck:',e)}
     }
     ensureBuiltInMinpo();
   }catch(e){console.error(e)}
