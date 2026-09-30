@@ -1,4 +1,4 @@
-const CACHE = 'ronsho-pwa-20261001-v10-tanto';
+const CACHE = 'ronsho-pwa-20261001-v11-cloze';
 const CORE = [
   './',
   './index.html',
@@ -6,6 +6,9 @@ const CORE = [
   './tanto.css',
   './tanto.js',
   './decks/tanto-sosoku-1.json',
+  './tanto.css?v=cloze1',
+  './tanto.js?v=cloze1',
+  './decks/tanto-sosoku-1.json?v=cloze1',
   './anki.html',
   './anki-app.html',
   './noriben.html',

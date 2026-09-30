@@ -3,7 +3,7 @@
   const STORAGE_KEY = 'tanto:study:sosoku-1:v1';
   const $ = id => document.getElementById(id);
   const labels = {new:'未学習',again:'もう一度',known:'覚えた'};
-  let deck, questions = [], queue = [], position = 0, answered = false, completed = false, toastTimer;
+  let deck, questions = [], queue = [], blanks = [], position = 0, answered = false, completed = false, toastTimer;
   let state = {records:{},category:'',filter:'all',shuffle:false,currentId:''};
   let storageAvailable = true;
 
@@ -85,11 +85,7 @@
     }
     const q = queue[position];
     state.currentId = q.id;
-    $('question').textContent = q.question;
-    $('answer').textContent = q.answer;
-    $('answerPanel').hidden = true;
-    $('reveal').hidden = false;
-    $('reveal').setAttribute('aria-expanded','false');
+    renderCloze(q);
     $('position').textContent = `${position + 1} / ${queue.length} 問`;
     $('categoryLabel').textContent = q.category;
     $('progress').max = queue.length;
@@ -107,13 +103,49 @@
     if (top < 0 || top > window.innerHeight / 2) $('study').scrollIntoView({block:'start',behavior:'auto'});
   }
 
+  function renderCloze(q) {
+    const fragment = document.createDocumentFragment();
+    blanks = [];
+    for (const part of q.parts) {
+      if (!part.blank) {fragment.append(document.createTextNode(part.text));continue;}
+      const button = document.createElement('button');
+      button.type = 'button';button.className = 'cloze';
+      const content = document.createElement('span');
+      content.className = 'cloze-answer';content.textContent = part.text;
+      button.append(content);
+      const blank = {button,content,text:part.text,index:blanks.length+1,revealed:false,seen:false};
+      blanks.push(blank);
+      setBlank(blank,false);
+      button.addEventListener('click',() => {setBlank(blank,!blank.revealed);updateClozeControls();});
+      fragment.append(button);
+    }
+    $('question').replaceChildren(fragment);
+    updateClozeControls();
+  }
+
+  function setBlank(blank,revealed) {
+    blank.revealed = revealed;
+    if (revealed) blank.seen = true;
+    blank.button.classList.toggle('is-revealed',revealed);
+    blank.button.setAttribute('aria-pressed',String(revealed));
+    blank.button.setAttribute('aria-label',revealed ? `${blank.text}（タップして隠す）` : `黒塗り${blank.index}を表示`);
+    blank.content.setAttribute('aria-hidden',String(!revealed));
+  }
+
+  function updateClozeControls() {
+    const visible = blanks.filter(blank => blank.revealed).length;
+    answered = blanks.length > 0 && blanks.every(blank => blank.seen);
+    $('clozeCount').textContent = `${visible} / ${blanks.length}か所表示`;
+    $('reveal').textContent = visible === blanks.length ? 'すべて隠す' : 'すべて表示';
+    $('known').disabled = !answered;
+    $('again').disabled = !answered;
+  }
+
   function reveal() {
-    if (!queue.length || completed || answered) return;
-    answered = true;
-    $('answerPanel').hidden = false;
-    $('reveal').setAttribute('aria-expanded','true');
-    $('reveal').hidden = true;
-    $('again').focus({preventScroll:true});
+    if (!queue.length || completed) return;
+    const show = blanks.some(blank => !blank.revealed);
+    blanks.forEach(blank => setBlank(blank,show));
+    updateClozeControls();
   }
 
   function next() {
@@ -156,7 +188,7 @@
       button.type = 'button';button.className = 'list-row';
       button.setAttribute('aria-current',String(!completed && i === position));
       const number = document.createElement('span');number.className = 'list-number';number.textContent = String(i+1);
-      const text = document.createElement('span');text.className = 'list-text';text.textContent = q.question;
+      const text = document.createElement('span');text.className = 'list-text';text.textContent = q.parts.map(part => part.blank ? '［黒塗り］' : part.text).join('');
       const tag = document.createElement('span');tag.className = `list-tag ${status(q.id)}`;tag.textContent = labels[status(q.id)];
       button.append(number,text,tag);
       button.addEventListener('click',() => {position=i;completed=false;$('questionList').open=false;showQuestion({focus:true});});
@@ -207,14 +239,22 @@
 
   async function init() {
     try {
-      const response = await fetch('./decks/tanto-sosoku-1.json');
+      const response = await fetch('./decks/tanto-sosoku-1.json?v=cloze1');
       if (!response.ok) throw new Error(`教材を取得できませんでした (${response.status})`);
       deck = await response.json();
       if (!Array.isArray(deck.questions) || !deck.questions.length) throw new Error('教材に問題がありません');
       questions = deck.questions;
       const ids = new Set();
       for (const q of questions) {
-        if (!q.id || ids.has(q.id) || typeof q.question!=='string' || !q.question.trim() || typeof q.answer!=='string' || !q.answer.trim() || typeof q.category!=='string') throw new Error('教材の形式が正しくありません');
+        if (!q.id || ids.has(q.id) || typeof q.cloze!=='string' || !q.cloze.trim() || typeof q.category!=='string') throw new Error('教材の形式が正しくありません');
+        q.parts = [];
+        let end = 0;
+        for (const match of q.cloze.matchAll(/\[\[([^\[\]\r\n]+)\]\]/g)) {
+          q.parts.push({text:q.cloze.slice(end,match.index),blank:false},{text:match[1],blank:true});
+          end = match.index + match[0].length;
+        }
+        q.parts.push({text:q.cloze.slice(end),blank:false});
+        if (!end || q.parts.some(part => !part.blank && /\[\[|\]\]/.test(part.text))) throw new Error('黒塗りの形式が正しくありません');
         ids.add(q.id);
       }
       readState();
