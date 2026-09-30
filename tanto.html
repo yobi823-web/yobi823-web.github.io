@@ -11,9 +11,9 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   <link rel="icon" href="./icon-192.png" sizes="192x192">
-  <link rel="stylesheet" href="./tanto.css?v=cloze1">
+  <link rel="stylesheet" href="./tanto.css?v=group1">
   <title>タントー君 — 民法総則の穴埋め学習</title>
-  <script src="./tanto.js?v=cloze1" defer></script>
+  <script src="./tanto.js?v=group1" defer></script>
   <script src="./pwa.js" defer></script>
 </head>
 <body>
@@ -40,7 +40,7 @@
           <progress id="progress" value="0" max="1" aria-label="この学習で確認した問題数"></progress>
           <article id="questionCard" class="question-card">
             <p id="clozeHint" class="cloze-hint">黒塗りをタップして答えを確認</p>
-            <h2 id="question" tabindex="-1"></h2>
+            <div id="question" tabindex="-1" role="group" aria-label="問題文"></div>
             <div class="reveal-row"><span id="clozeCount" class="cloze-count" role="status"></span><button id="reveal" type="button" class="button quiet" aria-controls="question">すべて表示</button></div>
             <div class="grade-actions"><button id="again" type="button" class="button again-button" disabled>もう一度</button><button id="known" type="button" class="button known-button" disabled>覚えた</button></div>
           </article>

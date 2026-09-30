@@ -35,6 +35,21 @@
       : 'この環境では学習記録を保存できません。画面を閉じると記録が失われる場合があります。';
   }
 
+  function migrateGroupedState() {
+    for (const q of questions) {
+      if (!Array.isArray(q.mergedFrom) || !q.mergedFrom.length) continue;
+      if (q.mergedFrom.includes(state.currentId)) state.currentId = q.id;
+      if (state.records[q.id]) continue;
+      const previous = q.mergedFrom.map(id => state.records[id]);
+      const mergedStatus = previous.some(record => record?.status === 'again') ? 'again'
+        : previous.every(record => record?.status === 'known') ? 'known' : null;
+      if (mergedStatus) {
+        const updatedAt = previous.map(record => record?.updatedAt).filter(value => typeof value === 'string').sort().pop();
+        state.records[q.id] = {status:mergedStatus, ...(updatedAt ? {updatedAt} : {})};
+      }
+    }
+  }
+
   function status(id) { return state.records[id]?.status || 'new'; }
   function inCategory(q) {return !state.category || q.category === state.category;}
   function scopedQuestions() {return questions.filter(inCategory);}
@@ -106,8 +121,27 @@
   function renderCloze(q) {
     const fragment = document.createDocumentFragment();
     blanks = [];
-    for (const part of q.parts) {
-      if (!part.blank) {fragment.append(document.createTextNode(part.text));continue;}
+    const heading = document.createElement('h2');
+    heading.className = 'cloze-stem';
+    appendClozeParts(heading,q.promptParts || q.parts);
+    fragment.append(heading);
+    if (q.itemParts) {
+      const list = document.createElement('ul');
+      list.className = 'cloze-items';
+      for (const parts of q.itemParts) {
+        const item = document.createElement('li');
+        appendClozeParts(item,parts);
+        list.append(item);
+      }
+      fragment.append(list);
+    }
+    $('question').replaceChildren(fragment);
+    updateClozeControls();
+  }
+
+  function appendClozeParts(container,parts) {
+    for (const part of parts) {
+      if (!part.blank) {container.append(document.createTextNode(part.text));continue;}
       const button = document.createElement('button');
       button.type = 'button';button.className = 'cloze';
       const content = document.createElement('span');
@@ -117,10 +151,8 @@
       blanks.push(blank);
       setBlank(blank,false);
       button.addEventListener('click',() => {setBlank(blank,!blank.revealed);updateClozeControls();});
-      fragment.append(button);
+      container.append(button);
     }
-    $('question').replaceChildren(fragment);
-    updateClozeControls();
   }
 
   function setBlank(blank,revealed) {
@@ -188,7 +220,8 @@
       button.type = 'button';button.className = 'list-row';
       button.setAttribute('aria-current',String(!completed && i === position));
       const number = document.createElement('span');number.className = 'list-number';number.textContent = String(i+1);
-      const text = document.createElement('span');text.className = 'list-text';text.textContent = q.parts.map(part => part.blank ? '［黒塗り］' : part.text).join('');
+      const text = document.createElement('span');text.className = 'list-text';
+      text.textContent = (q.promptParts || q.parts).map(part => part.blank ? '［黒塗り］' : part.text).join('') + (q.items ? `（${q.items.length}項目）` : '');
       const tag = document.createElement('span');tag.className = `list-tag ${status(q.id)}`;tag.textContent = labels[status(q.id)];
       button.append(number,text,tag);
       button.addEventListener('click',() => {position=i;completed=false;$('questionList').open=false;showQuestion({focus:true});});
@@ -237,9 +270,22 @@
     });
   }
 
+  function parseCloze(text) {
+    if (typeof text !== 'string' || !text.trim()) throw new Error('教材の文章がありません');
+    const parts = [];
+    let end = 0;
+    for (const match of text.matchAll(/\[\[([^\[\]\r\n]+)\]\]/g)) {
+      parts.push({text:text.slice(end,match.index),blank:false},{text:match[1],blank:true});
+      end = match.index + match[0].length;
+    }
+    parts.push({text:text.slice(end),blank:false});
+    if (parts.some(part => !part.blank && /\[\[|\]\]/.test(part.text))) throw new Error('黒塗りの形式が正しくありません');
+    return parts;
+  }
+
   async function init() {
     try {
-      const response = await fetch('./decks/tanto-sosoku-1.json?v=cloze1');
+      const response = await fetch('./decks/tanto-sosoku-1.json?v=group1');
       if (!response.ok) throw new Error(`教材を取得できませんでした (${response.status})`);
       deck = await response.json();
       if (!Array.isArray(deck.questions) || !deck.questions.length) throw new Error('教材に問題がありません');
@@ -247,17 +293,18 @@
       const ids = new Set();
       for (const q of questions) {
         if (!q.id || ids.has(q.id) || typeof q.cloze!=='string' || !q.cloze.trim() || typeof q.category!=='string') throw new Error('教材の形式が正しくありません');
-        q.parts = [];
-        let end = 0;
-        for (const match of q.cloze.matchAll(/\[\[([^\[\]\r\n]+)\]\]/g)) {
-          q.parts.push({text:q.cloze.slice(end,match.index),blank:false},{text:match[1],blank:true});
-          end = match.index + match[0].length;
+        q.parts = parseCloze(q.cloze);
+        if (!q.parts.some(part => part.blank)) throw new Error('黒塗りがありません');
+        if (q.items !== undefined) {
+          if (!Array.isArray(q.items) || !q.items.length) throw new Error('箇条書きの形式が正しくありません');
+          q.promptParts = parseCloze(q.prompt);
+          q.itemParts = q.items.map(parseCloze);
+          if (q.itemParts.some(parts => !parts.some(part => part.blank))) throw new Error('箇条書きに黒塗りがありません');
         }
-        q.parts.push({text:q.cloze.slice(end),blank:false});
-        if (!end || q.parts.some(part => !part.blank && /\[\[|\]\]/.test(part.text))) throw new Error('黒塗りの形式が正しくありません');
         ids.add(q.id);
       }
       readState();
+      migrateGroupedState();
       const categories = [...new Set(questions.map(q => q.category))];
       if (!categories.includes(state.category)) state.category='';
       for (const category of categories) {

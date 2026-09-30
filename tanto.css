@@ -41,6 +41,11 @@ progress::-moz-progress-bar{background:var(--blue);border-radius:8px}
 .question-card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:30px 34px;box-shadow:0 8px 26px #24385206;overflow-wrap:anywhere}
 .cloze-hint{font-size:13px;color:var(--muted);font-weight:500;margin:0 0 18px}
 #question{font-size:clamp(20px,2.4vw,25px);line-height:1.8;letter-spacing:.025em;font-weight:650;margin:0;min-height:88px;outline:none}
+.cloze-stem{font:inherit;letter-spacing:inherit;margin:0}
+.cloze-items{font-size:clamp(18px,2vw,21px);font-weight:600;line-height:1.85;margin:20px 0 0;padding-inline-start:1.2em}
+.cloze-items>li{padding-inline-start:.15em;margin:12px 0}
+.cloze-items>li:last-child{margin-bottom:0}
+.cloze-items>li::marker{color:var(--muted);font-size:.7em}
 .cloze{display:inline-block;max-width:100%;vertical-align:baseline;margin:2px .12em;padding:0 .2em;border:1px solid #18202e;border-radius:4px;background:#18202e;color:transparent;font:inherit;line-height:1.65;text-align:left;white-space:normal;overflow-wrap:anywhere;user-select:none;-webkit-user-select:none;cursor:pointer}
 .cloze-answer{visibility:hidden}
 .cloze.is-revealed{background:var(--blue-pale);border-color:#bfd0f7;color:#174cae}
