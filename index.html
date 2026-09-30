@@ -5,24 +5,25 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="color-scheme" content="light">
 <meta name="theme-color" content="#245cda">
-<meta name="description" content="論証の作成・黒塗り編集・暗記をひとつで行う学習ツール">
+<meta name="description" content="論証の暗記・黒塗り編集と、短答の一問一答を行う学習ツール">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="論証学習">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <link rel="icon" href="./icon-192.png" sizes="192x192">
-<title>論証学習ツール</title>
+<title>論証・短答学習ツール</title>
 <style>
 :root{--ink:#172436;--muted:#607087;--line:#dbe2ec;--bg:#f4f7fb;--paper:#fff;--blue:#245cda}
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#fff 0,#f4f7fb 48%,#edf2f8 100%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Yu Gothic",sans-serif}.shell{width:min(760px,calc(100% - 28px));margin:0 auto;padding:72px 0 48px}.hero{text-align:center;margin-bottom:30px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:.16em;color:#6b7890}.hero h1{font-size:clamp(32px,7vw,54px);line-height:1.15;margin:10px 0 14px;letter-spacing:.02em}.hero p{margin:0 auto;max-width:620px;color:var(--muted);font-size:16px;line-height:1.8}.install{margin:0 auto 24px;padding:13px 15px;border:1px solid #cad7ee;background:#f7faff;border-radius:12px;color:#44536a;font-size:14px;line-height:1.65}.install strong{color:var(--blue)}.card{display:flex;flex-direction:column;min-height:290px;padding:30px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.95);box-shadow:0 18px 50px rgba(42,57,78,.08);text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease}.card:hover{transform:translateY(-3px);box-shadow:0 22px 60px rgba(42,57,78,.13)}.icon{width:58px;height:58px;border-radius:15px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:27px;margin-bottom:24px;background:var(--blue)}.card h2{font-size:28px;margin:0 0 10px}.card p{margin:0;color:var(--muted);line-height:1.8}.features{margin:18px 0 0;padding-left:20px;color:#44536a;line-height:1.9}.go{margin-top:auto;padding-top:28px;font-weight:800;color:var(--blue)}.note{text-align:center;color:#7c899c;font-size:13px;margin-top:28px}@media(max-width:680px){.shell{padding-top:34px}.card{min-height:250px;padding:22px}.hero{margin-bottom:20px}.hero h1{font-size:36px}.install{text-align:left}}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(circle at top,#fff 0,#f4f7fb 48%,#edf2f8 100%);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP","Yu Gothic",sans-serif}.shell{width:min(760px,calc(100% - 28px));margin:0 auto;padding:72px 0 48px}.hero{text-align:center;margin-bottom:30px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:.16em;color:#6b7890}.hero h1{font-size:clamp(32px,7vw,54px);line-height:1.15;margin:10px 0 14px;letter-spacing:.02em}.hero p{margin:0 auto;max-width:620px;color:var(--muted);font-size:16px;line-height:1.8}.install{margin:0 auto 24px;padding:13px 15px;border:1px solid #cad7ee;background:#f7faff;border-radius:12px;color:#44536a;font-size:14px;line-height:1.65}.install strong{color:var(--blue)}.card{display:flex;flex-direction:column;min-height:290px;padding:30px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.95);box-shadow:0 18px 50px rgba(42,57,78,.08);text-decoration:none;color:inherit;transition:transform .15s ease,box-shadow .15s ease}.card:hover{transform:translateY(-3px);box-shadow:0 22px 60px rgba(42,57,78,.13)}.icon{width:58px;height:58px;border-radius:15px;display:grid;place-items:center;color:#fff;font-weight:900;font-size:27px;margin-bottom:24px;background:var(--blue)}.card h2{font-size:28px;margin:0 0 10px}.card p{margin:0;color:var(--muted);line-height:1.8}.features{margin:18px 0 0;padding-left:20px;color:#44536a;line-height:1.9}.go{margin-top:auto;padding-top:28px;font-weight:800;color:var(--blue)}.card+.card{margin-top:20px}.card.tanto .icon{background:#174f9f}.note{text-align:center;color:#7c899c;font-size:13px;margin-top:28px}@media(max-width:680px){.shell{padding-top:34px}.card{min-height:250px;padding:22px}.hero{margin-bottom:20px}.hero h1{font-size:36px}.install{text-align:left}}
 </style>
 </head>
 <body>
 <main class="shell">
-<section class="hero"><div class="eyebrow">LAW STUDY</div><h1>論証学習ツール</h1><p>教材の読み込み、黒塗り編集、暗記、学習記録までをひとつの画面で行います。</p></section>
+<section class="hero"><div class="eyebrow">LAW STUDY</div><h1>論証・短答学習ツール</h1><p>論証の暗記と、短答の一問一答。学びたい内容から選べます。</p></section>
 <div class="install" id="installHint"><strong>iPhoneに入れる：</strong>Safariの共有ボタン「□↑」→「ホーム画面に追加」。追加後はホーム画面のアイコンから単独アプリとして起動できます。</div>
 <a class="card" href="./anki.html"><div class="icon">ア</div><h2>アンキー君</h2><p>読み込んだ教材は端末内に保存され、そのまま黒塗りを編集して学習できます。</p><ul class="features"><li>教材一覧・複数教材の保存</li><li>本文を選択して黒塗り追加／タップで解除</li><li>覚えた・間違えたの学習記録</li><li>追加教材の削除・バックアップ</li></ul><div class="go">開く →</div></a>
+<a class="card tanto" href="./tanto.html"><div class="icon">タ</div><h2>タントー君</h2><p>民法総則を一問一答で確認。答えを見て、覚えた問題ともう一度解く問題を記録できます。</p><ul class="features"><li>民法総則1：154問・15分野</li><li>分野別の出題・ランダム順</li><li>「もう一度」の問題だけを復習</li><li>学習記録と続きの位置を保存</li></ul><div class="go">開く</div></a>
 <div class="note" id="pwaStatus">初回表示後、主要画面はオフラインでも起動できるよう保存されます。</div>
 </main>
 <script src="./pwa.js"></script>

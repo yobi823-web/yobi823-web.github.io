@@ -1,7 +1,7 @@
 {
-  "name": "論証学習ツール",
+  "name": "論証・短答学習ツール",
   "short_name": "論証学習",
-  "description": "論証の読み込み、黒塗り編集、暗記、学習記録をひとつで行うツール",
+  "description": "論証の暗記・黒塗り編集と、短答の一問一答を行う学習ツール",
   "lang": "ja",
   "start_url": "./",
   "scope": "./",
@@ -10,10 +10,43 @@
   "theme_color": "#245cda",
   "orientation": "any",
   "icons": [
-    {"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},
-    {"src":"./icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
   ],
   "shortcuts": [
-    {"name":"論証学習を開く","short_name":"学習","url":"./anki.html","icons":[{"src":"./icon-192.png","sizes":"192x192","type":"image/png"}]}
+    {
+      "name": "論証学習を開く",
+      "short_name": "学習",
+      "url": "./anki.html",
+      "icons": [
+        {
+          "src": "./icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "タントー君を開く",
+      "short_name": "短答",
+      "url": "./tanto.html",
+      "icons": [
+        {
+          "src": "./icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }

@@ -1,0 +1,1478 @@
+{
+  "schemaVersion": 1,
+  "id": "tanto-sosoku-1",
+  "title": "民法総則 1",
+  "sourceTitle": "短答対策＿総１",
+  "updatedAt": "2026-10-01",
+  "questions": [
+    {
+      "id": "sosoku1-001",
+      "category": "信義則・権利濫用",
+      "question": "国は公務員に対して、安全配慮義務を負うか。",
+      "answer": "負う。法律関係の付随義務として、信義則上、安全配慮義務を負う。",
+      "sourceParagraphs": [
+        3
+      ]
+    },
+    {
+      "id": "sosoku1-002",
+      "category": "信義則・権利濫用",
+      "question": "解除権を長期間行使しなかった場合、その後の行使が制限されることはあるか。",
+      "answer": "ある。信義則上、行使が制限される場合がある。",
+      "sourceParagraphs": [
+        4
+      ]
+    },
+    {
+      "id": "sosoku1-003",
+      "category": "信義則・権利濫用",
+      "question": "動産売買の引渡場所が漠然としている場合、買主には何が求められるか。",
+      "answer": "信義則上、引渡場所を問い合わせることが求められる。",
+      "sourceParagraphs": [
+        5
+      ]
+    },
+    {
+      "id": "sosoku1-004",
+      "category": "信義則・権利濫用",
+      "question": "軽微な所有権侵害と莫大な除去費用を利用して利得を得ようと所有権を取得した者は、侵害の除去を請求できるか。",
+      "answer": "権利の濫用となる場合には、除去を請求できない。",
+      "sourceParagraphs": [
+        6
+      ]
+    },
+    {
+      "id": "sosoku1-005",
+      "category": "信義則・権利濫用",
+      "question": "権利の行使であっても、不法行為が成立することはあるか。",
+      "answer": "ある。権利の行使であることだけで、不法行為の成立が否定されるわけではない。",
+      "sourceParagraphs": [
+        7
+      ]
+    },
+    {
+      "id": "sosoku1-006",
+      "category": "胎児",
+      "question": "胎児を死因贈与の受贈者にすることはできるか。",
+      "answer": "できない。死因贈与は契約であるため。",
+      "sourceParagraphs": [
+        10
+      ]
+    },
+    {
+      "id": "sosoku1-007",
+      "category": "胎児",
+      "question": "胎児を遺贈の受遺者にすることはできるか。",
+      "answer": "できる。遺贈には相続の規定が準用される。",
+      "sourceParagraphs": [
+        11
+      ]
+    },
+    {
+      "id": "sosoku1-008",
+      "category": "胎児",
+      "question": "父は胎児を認知できるか。承諾は必要か。",
+      "answer": "認知できる。ただし、母の承諾が必要。",
+      "sourceParagraphs": [
+        12
+      ]
+    },
+    {
+      "id": "sosoku1-009",
+      "category": "胎児",
+      "question": "母は胎児を代理して認知の訴えを提起できるか。",
+      "answer": "できない。",
+      "sourceParagraphs": [
+        13
+      ]
+    },
+    {
+      "id": "sosoku1-010",
+      "category": "胎児",
+      "question": "胎児の認知が拒否された場合、認知調停の申立てはできるか。",
+      "answer": "申立てまではできる。",
+      "sourceParagraphs": [
+        13
+      ]
+    },
+    {
+      "id": "sosoku1-011",
+      "category": "胎児",
+      "question": "胎児の損害賠償について出生前にされた和解は、出生した子を拘束するか。",
+      "answer": "拘束しない。母が胎児を代理して和解することもできない。",
+      "sourceParagraphs": [
+        14
+      ]
+    },
+    {
+      "id": "sosoku1-012",
+      "category": "胎児",
+      "question": "第三者のためにする契約で、胎児を第三者とすることはできるか。",
+      "answer": "できる。契約時に第三者が存在している必要はないため。",
+      "sourceParagraphs": [
+        15
+      ]
+    },
+    {
+      "id": "sosoku1-013",
+      "category": "意思能力",
+      "question": "法律行為時に意思能力がなかった場合、その法律行為の効力はどうなるか。",
+      "answer": "無効となる。",
+      "sourceParagraphs": [
+        18
+      ]
+    },
+    {
+      "id": "sosoku1-014",
+      "category": "意思能力",
+      "question": "意思能力の欠如による無効は、第三者にも主張できるか。",
+      "answer": "第三者にも主張できる。",
+      "sourceParagraphs": [
+        18
+      ]
+    },
+    {
+      "id": "sosoku1-015",
+      "category": "意思能力",
+      "question": "意思能力を欠いた者の原状回復義務は、どの範囲に限られるか。",
+      "answer": "現に利益を受けている範囲、すなわち現存利益の限度に限られる。",
+      "sourceParagraphs": [
+        18
+      ]
+    },
+    {
+      "id": "sosoku1-016",
+      "category": "意思能力",
+      "question": "人違いなどによって婚姻意思がない場合、婚姻は無効か、取消しの対象か。",
+      "answer": "無効である。取消しではない。",
+      "sourceParagraphs": [
+        20
+      ]
+    },
+    {
+      "id": "sosoku1-017",
+      "category": "未成年者",
+      "question": "未成年者が法律行為をするには、原則として誰の同意が必要か。",
+      "answer": "法定代理人の同意が必要。",
+      "sourceParagraphs": [
+        24
+      ]
+    },
+    {
+      "id": "sosoku1-018",
+      "category": "未成年者",
+      "question": "未成年者が単に権利を得、又は義務を免れる行為をする場合にも、法定代理人の同意が必要か。",
+      "answer": "必要ない。",
+      "sourceParagraphs": [
+        24
+      ]
+    },
+    {
+      "id": "sosoku1-019",
+      "category": "未成年者",
+      "question": "営業を許された未成年者は、その営業の範囲内で行為能力を有するか。",
+      "answer": "その営業の範囲内では行為能力を有する。",
+      "sourceParagraphs": [
+        25
+      ]
+    },
+    {
+      "id": "sosoku1-020",
+      "category": "未成年者",
+      "question": "目的を定めて処分を許された財産を、未成年者はどの範囲で処分できるか。",
+      "answer": "定められた目的の範囲内で処分できる。",
+      "sourceParagraphs": [
+        26
+      ]
+    },
+    {
+      "id": "sosoku1-021",
+      "category": "未成年者",
+      "question": "目的を定めずに処分を許された財産は、未成年者が自由に処分できるか。",
+      "answer": "自由に処分できる。",
+      "sourceParagraphs": [
+        26
+      ]
+    },
+    {
+      "id": "sosoku1-022",
+      "category": "未成年者",
+      "question": "未成年者は遺言の証人になれるか。",
+      "answer": "なれない。",
+      "sourceParagraphs": [
+        27
+      ]
+    },
+    {
+      "id": "sosoku1-023",
+      "category": "未成年者",
+      "question": "親権を行使する親がいる未成年者についても、事由があれば後見開始は可能か。",
+      "answer": "可能である。",
+      "sourceParagraphs": [
+        28
+      ]
+    },
+    {
+      "id": "sosoku1-024",
+      "category": "成年後見・保佐・補助",
+      "question": "後見開始の事由となる事理弁識能力の状態は何か。",
+      "answer": "事理弁識能力を欠く常況にあること。",
+      "sourceParagraphs": [
+        30
+      ]
+    },
+    {
+      "id": "sosoku1-025",
+      "category": "成年後見・保佐・補助",
+      "question": "補助開始の事由となる事理弁識能力の状態は何か。",
+      "answer": "事理弁識能力が不十分であること。",
+      "sourceParagraphs": [
+        31
+      ]
+    },
+    {
+      "id": "sosoku1-026",
+      "category": "成年後見・保佐・補助",
+      "question": "被保佐人が列挙された行為をする場合、誰の同意が必要か。",
+      "answer": "保佐人の同意が必要。",
+      "sourceParagraphs": [
+        32
+      ]
+    },
+    {
+      "id": "sosoku1-027",
+      "category": "成年後見・保佐・補助",
+      "question": "被補助人について、補助人の同意を要する行為はどのように定まるか。",
+      "answer": "列挙された行為のうち、家庭裁判所が指定した行為について同意が必要となる。",
+      "sourceParagraphs": [
+        32
+      ]
+    },
+    {
+      "id": "sosoku1-028",
+      "category": "成年後見・保佐・補助",
+      "question": "後見開始の事由があるだけで、行為能力の制限を理由とする取消権が生じるか。",
+      "answer": "生じない。後見開始等の審判が必要。",
+      "sourceParagraphs": [
+        33
+      ]
+    },
+    {
+      "id": "sosoku1-029",
+      "category": "成年後見・保佐・補助",
+      "question": "保佐開始の審判に、本人の同意は必要か。",
+      "answer": "必要ない。",
+      "sourceParagraphs": [
+        34
+      ]
+    },
+    {
+      "id": "sosoku1-030",
+      "category": "成年後見・保佐・補助",
+      "question": "補助開始の審判だけで、補助人に代理権・同意権が生じるか。",
+      "answer": "生じない。代理権を付与する審判又は同意権を付与する審判が必要。",
+      "sourceParagraphs": [
+        35
+      ]
+    },
+    {
+      "id": "sosoku1-031",
+      "category": "成年後見・保佐・補助",
+      "question": "補助開始の審判をする際、代理権・同意権についての審判は少なくとも一方が必要か。",
+      "answer": "必要。代理権の付与又は同意権の付与の審判とともにしなければならない。",
+      "sourceParagraphs": [
+        35
+      ]
+    },
+    {
+      "id": "sosoku1-032",
+      "category": "成年後見・保佐・補助",
+      "question": "既に後見等の開始の審判を受けた者について別の類型の開始の審判をする場合、前の審判はどうするか。",
+      "answer": "前の審判を取り消す。",
+      "sourceParagraphs": [
+        36
+      ]
+    },
+    {
+      "id": "sosoku1-033",
+      "category": "成年後見・保佐・補助",
+      "question": "後見等の開始の審判は、請求によって行われるか。",
+      "answer": "請求によって行われる。",
+      "sourceParagraphs": [
+        37
+      ]
+    },
+    {
+      "id": "sosoku1-034",
+      "category": "成年後見・保佐・補助",
+      "question": "成年被後見人が婚姻する際、成年後見人の同意は必要か。",
+      "answer": "必要ない。",
+      "sourceParagraphs": [
+        38
+      ]
+    },
+    {
+      "id": "sosoku1-035",
+      "category": "成年後見・保佐・補助",
+      "question": "成年被後見人が自らした法律行為は、成年後見人の同意があっても取り消せるか。",
+      "answer": "原則として取り消せる。ただし、日用品の購入その他日常生活に関する行為は除く。",
+      "sourceParagraphs": [
+        39,
+        40
+      ]
+    },
+    {
+      "id": "sosoku1-036",
+      "category": "成年後見・保佐・補助",
+      "question": "成年被後見人の日用品の購入は、行為能力の制限を理由に取り消せるか。",
+      "answer": "取り消せない。日用品の購入その他日常生活に関する行為は例外となる。",
+      "sourceParagraphs": [
+        40
+      ]
+    },
+    {
+      "id": "sosoku1-037",
+      "category": "成年後見・保佐・補助",
+      "question": "保佐人の同意を要する「訴訟行為」に、応訴は含まれるか。",
+      "answer": "含まれない。",
+      "sourceParagraphs": [
+        41
+      ]
+    },
+    {
+      "id": "sosoku1-038",
+      "category": "成年後見・保佐・補助",
+      "question": "保佐人の同意を要する「元本の領収」に、貸付金の弁済を受けることは含まれるか。",
+      "answer": "含まれる。",
+      "sourceParagraphs": [
+        42
+      ]
+    },
+    {
+      "id": "sosoku1-039",
+      "category": "成年後見・保佐・補助",
+      "question": "保佐人の同意を得た被保佐人は、その行為を必ずしなければならないか。",
+      "answer": "その行為をする必要はない。同意を得たことによって行為を義務付けられるわけではない。",
+      "sourceParagraphs": [
+        43
+      ]
+    },
+    {
+      "id": "sosoku1-040",
+      "category": "成年後見・保佐・補助",
+      "question": "本人の利益を害するおそれがないのに保佐人が同意しない場合、本人はどうできるか。",
+      "answer": "家庭裁判所に、保佐人の同意に代わる許可を求めることができる。",
+      "sourceParagraphs": [
+        44
+      ]
+    },
+    {
+      "id": "sosoku1-041",
+      "category": "取消し・追認",
+      "question": "行為能力者であると信じさせるために詐術を用いた制限行為能力者は、行為能力の制限を理由に取り消せるか。",
+      "answer": "取り消せない。",
+      "sourceParagraphs": [
+        46
+      ]
+    },
+    {
+      "id": "sosoku1-042",
+      "category": "取消し・追認",
+      "question": "制限行為能力者が、取り消せることを知りながら法律行為をしただけで、取消しができなくなるか。",
+      "answer": "それだけでは取消しができなくなるわけではない。",
+      "sourceParagraphs": [
+        46
+      ]
+    },
+    {
+      "id": "sosoku1-043",
+      "category": "取消し・追認",
+      "question": "詐術を用いたため行為能力の制限を理由に取り消せない場合、錯誤や詐欺などの別の理由による取消しもできないか。",
+      "answer": "別の取消原因があれば、その理由による取消しは可能。",
+      "sourceParagraphs": [
+        47
+      ]
+    },
+    {
+      "id": "sosoku1-044",
+      "category": "取消し・追認",
+      "question": "行為能力の制限を理由とする取消権を行使できるのは誰か。",
+      "answer": "本人、その代理人、承継人又は同意をすることができる者。",
+      "sourceParagraphs": [
+        48
+      ]
+    },
+    {
+      "id": "sosoku1-045",
+      "category": "取消し・追認",
+      "question": "有効な追認には、原則としてどのような時点に達している必要があるか。",
+      "answer": "取消しの原因が消滅し、取消権を有することを知った後であること。",
+      "sourceParagraphs": [
+        49,
+        152
+      ]
+    },
+    {
+      "id": "sosoku1-046",
+      "category": "取消し・追認",
+      "question": "有効に追認した後、その行為を取り消せるか。",
+      "answer": "取り消せない。",
+      "sourceParagraphs": [
+        49
+      ]
+    },
+    {
+      "id": "sosoku1-047",
+      "category": "取消し・追認",
+      "question": "取消権について、追認できる時からの期間と行為の時からの期間はそれぞれ何年か。",
+      "answer": "追認できる時から5年、行為の時から20年。",
+      "sourceParagraphs": [
+        50,
+        154
+      ]
+    },
+    {
+      "id": "sosoku1-048",
+      "category": "取消し・追認",
+      "question": "制限行為能力者が行為能力者となった後、相手方が本人に確答を催告する際、何か月以上の期間が必要か。",
+      "answer": "1か月以上の期間が必要。",
+      "sourceParagraphs": [
+        52
+      ]
+    },
+    {
+      "id": "sosoku1-049",
+      "category": "取消し・追認",
+      "question": "行為能力者となった本人に催告をしたのに期間内に確答がない場合、どのように扱われるか。",
+      "answer": "追認したものとみなされる。",
+      "sourceParagraphs": [
+        54
+      ]
+    },
+    {
+      "id": "sosoku1-050",
+      "category": "取消し・追認",
+      "question": "取消し得る行為で取得した権利の処分や履行の請求は、どの制度の問題となるか。",
+      "answer": "法定追認。要件を満たす場合には、追認したものとみなされる。",
+      "sourceParagraphs": [
+        55
+      ]
+    },
+    {
+      "id": "sosoku1-051",
+      "category": "取消し・追認",
+      "question": "制限行為能力者の相手方からの催告に対する確答は、到達主義か、発信主義か。",
+      "answer": "発信主義。",
+      "sourceParagraphs": [
+        124
+      ]
+    },
+    {
+      "id": "sosoku1-052",
+      "category": "意思表示の受領・代理・後見人",
+      "question": "意思表示の相手方に受領能力がない場合、その意思表示は当然に無効となるか。",
+      "answer": "無効になるわけではない。その意思表示を相手方に対抗できない。",
+      "sourceParagraphs": [
+        57
+      ]
+    },
+    {
+      "id": "sosoku1-053",
+      "category": "意思表示の受領・代理・後見人",
+      "question": "受領能力のない相手方の法定代理人が意思表示を知った後は、対抗できるか。",
+      "answer": "対抗できる。",
+      "sourceParagraphs": [
+        57
+      ]
+    },
+    {
+      "id": "sosoku1-054",
+      "category": "意思表示の受領・代理・後見人",
+      "question": "制限行為能力者が代理人としてした行為は、その代理人の行為能力の制限を理由に取り消せるか。",
+      "answer": "原則として取り消せない。",
+      "sourceParagraphs": [
+        59,
+        60
+      ]
+    },
+    {
+      "id": "sosoku1-055",
+      "category": "意思表示の受領・代理・後見人",
+      "question": "後見人が負う注意義務は何か。",
+      "answer": "善良な管理者の注意義務。",
+      "sourceParagraphs": [
+        62
+      ]
+    },
+    {
+      "id": "sosoku1-056",
+      "category": "意思表示の受領・代理・後見人",
+      "question": "成年後見人が欠けた場合、選任は請求による場合に限られるか。",
+      "answer": "限られない。請求又は職権によって選任される。",
+      "sourceParagraphs": [
+        63
+      ]
+    },
+    {
+      "id": "sosoku1-057",
+      "category": "意思表示の受領・代理・後見人",
+      "question": "未成年者は後見人になれるか。",
+      "answer": "なれない。",
+      "sourceParagraphs": [
+        64
+      ]
+    },
+    {
+      "id": "sosoku1-058",
+      "category": "意思表示の受領・代理・後見人",
+      "question": "未成年者等が後見人に対して有する権利について、行為能力者となったとき等から時効の完成が猶予される期間は何か月か。",
+      "answer": "6か月。",
+      "sourceParagraphs": [
+        65
+      ]
+    },
+    {
+      "id": "sosoku1-059",
+      "category": "不在者",
+      "question": "不在者が財産管理人を置かなかった場合、家庭裁判所は誰の請求で財産管理に必要な処分を命じられるか。",
+      "answer": "利害関係人又は検察官の請求。",
+      "sourceParagraphs": [
+        68
+      ]
+    },
+    {
+      "id": "sosoku1-060",
+      "category": "不在者",
+      "question": "債権者不確知を理由とする供託において、「不確知」とは何をいうか。",
+      "answer": "債権者が誰か分からないこと。どこにいるか分からないこととは区別する。",
+      "sourceParagraphs": [
+        69
+      ]
+    },
+    {
+      "id": "sosoku1-061",
+      "category": "不在者",
+      "question": "債権者不確知を理由とする供託では、弁済者に過失がないことが必要か。",
+      "answer": "必要。",
+      "sourceParagraphs": [
+        69
+      ]
+    },
+    {
+      "id": "sosoku1-062",
+      "category": "不在者",
+      "question": "相手方の所在が過失なく分からない場合、意思表示はどのような方法でできるか。",
+      "answer": "公示の方法によることができる。",
+      "sourceParagraphs": [
+        70
+      ]
+    },
+    {
+      "id": "sosoku1-063",
+      "category": "不在者",
+      "question": "不在者の財産管理人が権限を超える行為をするには、何が必要か。",
+      "answer": "家庭裁判所の許可。遺産分割についても許可が必要となる。",
+      "sourceParagraphs": [
+        71,
+        74
+      ]
+    },
+    {
+      "id": "sosoku1-064",
+      "category": "不在者",
+      "question": "不在者の財産管理人が現金を銀行に預けることは、どのような行為に当たるか。",
+      "answer": "利用行為に当たり、することができる。",
+      "sourceParagraphs": [
+        72
+      ]
+    },
+    {
+      "id": "sosoku1-065",
+      "category": "不在者",
+      "question": "不在者の財産管理人は、弁済期の到来した債務を弁済できるか。",
+      "answer": "できる。保存行為に当たる。",
+      "sourceParagraphs": [
+        73
+      ]
+    },
+    {
+      "id": "sosoku1-066",
+      "category": "不在者",
+      "question": "不在者の財産管理人が遺産分割をするには、家庭裁判所の許可が必要か。",
+      "answer": "必要。",
+      "sourceParagraphs": [
+        74
+      ]
+    },
+    {
+      "id": "sosoku1-067",
+      "category": "不在者",
+      "question": "不在者というためには、所在が不明であることが必要か。",
+      "answer": "必要ない。従来の住所を去った者であることと、所在が分からないこととは別の問題。",
+      "sourceParagraphs": [
+        75
+      ]
+    },
+    {
+      "id": "sosoku1-068",
+      "category": "不在者",
+      "question": "不在者が自ら財産管理人を置いていても、家庭裁判所は必要な処分を命じられるか。",
+      "answer": "命じられる。財産目録の作成などがその例。",
+      "sourceParagraphs": [
+        76
+      ]
+    },
+    {
+      "id": "sosoku1-069",
+      "category": "失踪宣告",
+      "question": "危難失踪で失踪宣告のために必要な期間は何年か。",
+      "answer": "1年。",
+      "sourceParagraphs": [
+        79
+      ]
+    },
+    {
+      "id": "sosoku1-070",
+      "category": "失踪宣告",
+      "question": "危難失踪では、いつ死亡したものとみなされるか。",
+      "answer": "危難が去った時。",
+      "sourceParagraphs": [
+        79
+      ]
+    },
+    {
+      "id": "sosoku1-071",
+      "category": "失踪宣告",
+      "question": "普通失踪で失踪宣告のために必要な期間は何年か。",
+      "answer": "7年。",
+      "sourceParagraphs": [
+        80
+      ]
+    },
+    {
+      "id": "sosoku1-072",
+      "category": "失踪宣告",
+      "question": "普通失踪では、いつ死亡したものとみなされるか。",
+      "answer": "7年間の期間が満了した時。",
+      "sourceParagraphs": [
+        80
+      ]
+    },
+    {
+      "id": "sosoku1-073",
+      "category": "失踪宣告",
+      "question": "失踪宣告は、誰の請求によってされるか。",
+      "answer": "利害関係人の請求。",
+      "sourceParagraphs": [
+        79,
+        80
+      ]
+    },
+    {
+      "id": "sosoku1-074",
+      "category": "失踪宣告",
+      "question": "失踪宣告によって、失踪者の権利能力自体が失われるか。",
+      "answer": "失われない。",
+      "sourceParagraphs": [
+        81
+      ]
+    },
+    {
+      "id": "sosoku1-075",
+      "category": "失踪宣告",
+      "question": "失踪宣告が取り消された場合、善意でされた行為の効力は影響を受けるか。",
+      "answer": "影響を受けない。",
+      "sourceParagraphs": [
+        82
+      ]
+    },
+    {
+      "id": "sosoku1-076",
+      "category": "失踪宣告",
+      "question": "失踪宣告取消し後も行為の効力が保護されるための善意は、当事者の一方だけで足りるか。",
+      "answer": "足りない。当事者双方が善意である必要がある。",
+      "sourceParagraphs": [
+        82
+      ]
+    },
+    {
+      "id": "sosoku1-077",
+      "category": "失踪宣告",
+      "question": "失踪宣告と異なる時期に死亡したことが証明された場合、誰の請求で失踪宣告を取り消すか。",
+      "answer": "本人又は利害関係人の請求。",
+      "sourceParagraphs": [
+        83
+      ]
+    },
+    {
+      "id": "sosoku1-078",
+      "category": "失踪宣告",
+      "question": "失踪宣告の利害関係人に、推定相続人は含まれるか。",
+      "answer": "含まれる。",
+      "sourceParagraphs": [
+        84
+      ]
+    },
+    {
+      "id": "sosoku1-079",
+      "category": "失踪宣告",
+      "question": "失踪宣告によって財産を得た者の返還義務について、原文が挙げる返還範囲は何か。",
+      "answer": "現存利益の範囲。",
+      "sourceParagraphs": [
+        85
+      ]
+    },
+    {
+      "id": "sosoku1-080",
+      "category": "社団・法人",
+      "question": "権利能力なき社団というためには、どのような団体の特徴が必要か。",
+      "answer": "団体としての組織、多数決の原則、構成員が変わっても団体が存続すること、代表・運営・財産管理などの定めがあること。",
+      "sourceParagraphs": [
+        88
+      ]
+    },
+    {
+      "id": "sosoku1-081",
+      "category": "社団・法人",
+      "question": "権利能力なき社団は、社団名義で所有権の登記をできるか。",
+      "answer": "できない。",
+      "sourceParagraphs": [
+        89
+      ]
+    },
+    {
+      "id": "sosoku1-082",
+      "category": "社団・法人",
+      "question": "権利能力なき社団は、代表者の肩書を付けた代表者名義なら所有権の登記をできるか。",
+      "answer": "できない。",
+      "sourceParagraphs": [
+        89
+      ]
+    },
+    {
+      "id": "sosoku1-083",
+      "category": "社団・法人",
+      "question": "法人でない社団が、その名で訴え、又は訴えられるために必要な定めは何か。",
+      "answer": "代表者又は管理人の定め。",
+      "sourceParagraphs": [
+        90
+      ]
+    },
+    {
+      "id": "sosoku1-084",
+      "category": "社団・法人",
+      "question": "権利能力なき社団の財産は、構成員にどのように帰属するか。",
+      "answer": "構成員の総有に属する。潜在的な持分もない。",
+      "sourceParagraphs": [
+        91
+      ]
+    },
+    {
+      "id": "sosoku1-085",
+      "category": "社団・法人",
+      "question": "権利能力なき社団の名義で行われた取引の債務は、どのように帰属するか。",
+      "answer": "構成員全員に総有的に帰属する。",
+      "sourceParagraphs": [
+        92
+      ]
+    },
+    {
+      "id": "sosoku1-086",
+      "category": "社団・法人",
+      "question": "権利能力なき社団の取引について、責任財産となるのは何か。",
+      "answer": "社団財産のみ。",
+      "sourceParagraphs": [
+        92
+      ]
+    },
+    {
+      "id": "sosoku1-087",
+      "category": "社団・法人",
+      "question": "法人は成年後見人や保佐人になれるか。",
+      "answer": "なれる。",
+      "sourceParagraphs": [
+        93
+      ]
+    },
+    {
+      "id": "sosoku1-088",
+      "category": "社団・法人",
+      "question": "法人は組合契約の構成員になれるか。",
+      "answer": "なれる。",
+      "sourceParagraphs": [
+        94
+      ]
+    },
+    {
+      "id": "sosoku1-089",
+      "category": "社団・法人",
+      "question": "法人の名誉が毀損された場合、損害賠償請求は認められるか。",
+      "answer": "認められる。",
+      "sourceParagraphs": [
+        95
+      ]
+    },
+    {
+      "id": "sosoku1-090",
+      "category": "社団・法人",
+      "question": "法人は遺言執行者になれるか。",
+      "answer": "なれる。",
+      "sourceParagraphs": [
+        96
+      ]
+    },
+    {
+      "id": "sosoku1-091",
+      "category": "社団・法人",
+      "question": "法人は特別縁故者として財産分与の対象になり得るか。",
+      "answer": "なり得る。",
+      "sourceParagraphs": [
+        97
+      ]
+    },
+    {
+      "id": "sosoku1-092",
+      "category": "社団・法人",
+      "question": "法人の権利能力は、定款で定めた目的との関係でどの範囲に認められるか。",
+      "answer": "目的の範囲内。目的達成に直接又は間接に必要な行為も含まれる。",
+      "sourceParagraphs": [
+        98
+      ]
+    },
+    {
+      "id": "sosoku1-093",
+      "category": "社団・法人",
+      "question": "代表取締役が職務について第三者に損害を与えた場合、不法行為責任を負うのは会社だけか。",
+      "answer": "会社だけではなく、代表取締役自身も責任を負う。",
+      "sourceParagraphs": [
+        99
+      ]
+    },
+    {
+      "id": "sosoku1-094",
+      "category": "社団・法人",
+      "question": "代表取締役の行為が職務に属するかは、外形的に判断されるか。",
+      "answer": "外形的に職務に属すると認められるかによって判断される。",
+      "sourceParagraphs": [
+        99
+      ]
+    },
+    {
+      "id": "sosoku1-095",
+      "category": "社団・法人",
+      "question": "代表取締役の行為が職務に属さないことについて相手方が悪意又は重過失の場合、会社は責任を負うか。",
+      "answer": "会社は責任を負わない。",
+      "sourceParagraphs": [
+        99
+      ]
+    },
+    {
+      "id": "sosoku1-096",
+      "category": "社団・法人",
+      "question": "外国法人は、日本法人と同様の私権を有するか。",
+      "answer": "外国人に認められない権利を除き、日本法人と同様の私権を有する。",
+      "sourceParagraphs": [
+        100
+      ]
+    },
+    {
+      "id": "sosoku1-097",
+      "category": "社団・法人",
+      "question": "法人に権利能力が認められるのは、設立登記の前か、後か。",
+      "answer": "設立登記の後。",
+      "sourceParagraphs": [
+        101
+      ]
+    },
+    {
+      "id": "sosoku1-098",
+      "category": "社団・法人",
+      "question": "代表者以外の構成員の不法行為についても、法人が責任を負うことはあるか。",
+      "answer": "ある。使用者責任が成立する場合には、法人も責任を負う。",
+      "sourceParagraphs": [
+        103
+      ]
+    },
+    {
+      "id": "sosoku1-099",
+      "category": "社団・法人",
+      "question": "理事が複数いることや代表理事を定めたことだけで、一般社団法人に理事会の設置が必要となるか。",
+      "answer": "必要とはならない。",
+      "sourceParagraphs": [
+        104,
+        105
+      ]
+    },
+    {
+      "id": "sosoku1-100",
+      "category": "社団・法人",
+      "question": "一般社団法人が理事会を設置する場合、監事の設置も必要か。",
+      "answer": "必要。",
+      "sourceParagraphs": [
+        106
+      ]
+    },
+    {
+      "id": "sosoku1-101",
+      "category": "社団・法人",
+      "question": "株式会社で、剰余金の配当と残余財産の分配を受ける権利の全部を株主に与えない定款の定めは有効か。",
+      "answer": "無効。",
+      "sourceParagraphs": [
+        107
+      ]
+    },
+    {
+      "id": "sosoku1-102",
+      "category": "社団・法人",
+      "question": "一般社団法人で、社員に剰余金や残余財産の分配を受ける権利を与える定款の定めは有効か。",
+      "answer": "無効。",
+      "sourceParagraphs": [
+        108
+      ]
+    },
+    {
+      "id": "sosoku1-103",
+      "category": "物",
+      "question": "住宅用でない建物について、屋根と囲壁はあるが床や天井がない場合でも、建物となり得るか。",
+      "answer": "建物となり得る。",
+      "sourceParagraphs": [
+        113
+      ]
+    },
+    {
+      "id": "sosoku1-104",
+      "category": "物",
+      "question": "賃借人が承諾を受けて増築した建物の2階部分について、原文は取引上の独立性を認めているか。",
+      "answer": "認めていない。",
+      "sourceParagraphs": [
+        114
+      ]
+    },
+    {
+      "id": "sosoku1-105",
+      "category": "意思表示総論",
+      "question": "隔地者への意思表示は、いつ効力を生じるか。メールも同じか。",
+      "answer": "相手方に到達した時に効力を生じる。メールも到達時を基準とする。",
+      "sourceParagraphs": [
+        118,
+        125
+      ]
+    },
+    {
+      "id": "sosoku1-106",
+      "category": "意思表示総論",
+      "question": "意思表示の「到達」には、相手方が現実に内容を知ることが必要か。",
+      "answer": "必要ない。支配領域に入り、社会通念上、了知できる客観的状態になればよい。",
+      "sourceParagraphs": [
+        118
+      ]
+    },
+    {
+      "id": "sosoku1-107",
+      "category": "意思表示総論",
+      "question": "相手方が正当な理由なく意思表示の到達を妨げた場合、いつ到達したものとみなされるか。",
+      "answer": "通常到達すべきであった時。",
+      "sourceParagraphs": [
+        119
+      ]
+    },
+    {
+      "id": "sosoku1-108",
+      "category": "意思表示総論",
+      "question": "意思表示の通知を発した後に表意者が死亡しただけで、その効力は妨げられるか。",
+      "answer": "原則として妨げられない。契約の申込みについては別の定めがある。",
+      "sourceParagraphs": [
+        19,
+        122
+      ]
+    },
+    {
+      "id": "sosoku1-109",
+      "category": "意思表示総論",
+      "question": "申込者が「通知後に死亡したら申込みは効力を失う」と表示していた場合、死亡によって申込みはどうなるか。",
+      "answer": "効力を失う。",
+      "sourceParagraphs": [
+        19
+      ]
+    },
+    {
+      "id": "sosoku1-110",
+      "category": "意思表示総論",
+      "question": "申込者の死亡を相手方が承諾の通知を発するまでに知った場合、申込みは効力を有するか。",
+      "answer": "効力を有しない。",
+      "sourceParagraphs": [
+        19
+      ]
+    },
+    {
+      "id": "sosoku1-111",
+      "category": "意思表示総論",
+      "question": "承諾期間を定めた申込みは、原則として撤回できるか。",
+      "answer": "撤回できない。ただし、撤回権を留保した場合は別。",
+      "sourceParagraphs": [
+        123
+      ]
+    },
+    {
+      "id": "sosoku1-112",
+      "category": "意思表示総論",
+      "question": "申込みの到達より前又は到達と同時に撤回の意思表示が到達した場合、撤回できるか。",
+      "answer": "できる。",
+      "sourceParagraphs": [
+        123
+      ]
+    },
+    {
+      "id": "sosoku1-113",
+      "category": "意思表示総論",
+      "question": "承諾期間を定めた申込みについて、その期間が過ぎた場合はどうなるか。",
+      "answer": "申込みは効力を失う。",
+      "sourceParagraphs": [
+        123
+      ]
+    },
+    {
+      "id": "sosoku1-114",
+      "category": "虚偽表示",
+      "question": "虚偽表示における第三者の定義で、当事者のほかに除かれる者は誰か。",
+      "answer": "当事者の包括承継人。仮装譲受人の相続人もこれに当たる。",
+      "sourceParagraphs": [
+        129,
+        132
+      ]
+    },
+    {
+      "id": "sosoku1-115",
+      "category": "虚偽表示",
+      "question": "虚偽表示における第三者は、どのような利害関係を取得した者か。",
+      "answer": "当該権利の外観を信頼して、新しく独立した法的利害関係を有するに至った者。",
+      "sourceParagraphs": [
+        129
+      ]
+    },
+    {
+      "id": "sosoku1-116",
+      "category": "虚偽表示",
+      "question": "仮装譲受人から抵当権の設定を受けた者は、虚偽表示の第三者に当たるか。",
+      "answer": "当たる。",
+      "sourceParagraphs": [
+        130
+      ]
+    },
+    {
+      "id": "sosoku1-117",
+      "category": "虚偽表示",
+      "question": "土地の賃借人がその土地上の建物を仮装譲渡した場合、土地の賃貸人は第三者に当たるか。",
+      "answer": "当たらない。",
+      "sourceParagraphs": [
+        131
+      ]
+    },
+    {
+      "id": "sosoku1-118",
+      "category": "虚偽表示",
+      "question": "仮装譲受人の相続人は、虚偽表示の第三者に当たるか。",
+      "answer": "当たらない。包括承継人であるため。",
+      "sourceParagraphs": [
+        132
+      ]
+    },
+    {
+      "id": "sosoku1-119",
+      "category": "虚偽表示",
+      "question": "仮装譲受人の単なる一般債権者は、虚偽表示の第三者に当たるか。",
+      "answer": "当たらない。",
+      "sourceParagraphs": [
+        133
+      ]
+    },
+    {
+      "id": "sosoku1-120",
+      "category": "虚偽表示",
+      "question": "仮装譲受人の債権者が仮装譲渡された財産を差し押さえた場合、第三者に当たるか。",
+      "answer": "当たる。",
+      "sourceParagraphs": [
+        133
+      ]
+    },
+    {
+      "id": "sosoku1-121",
+      "category": "虚偽表示",
+      "question": "土地の仮装譲受人から、その土地上の建物を賃借した者は、土地の虚偽表示の第三者に当たるか。",
+      "answer": "当たらない。",
+      "sourceParagraphs": [
+        134
+      ]
+    },
+    {
+      "id": "sosoku1-122",
+      "category": "虚偽表示",
+      "question": "虚偽表示の第三者が保護を受けるため、権利保護要件としての登記は必要か。",
+      "answer": "必要ない。",
+      "sourceParagraphs": [
+        135
+      ]
+    },
+    {
+      "id": "sosoku1-123",
+      "category": "虚偽表示",
+      "question": "仮装譲受人から善意で譲り受けた者は、虚偽表示の第三者に当たるか。",
+      "answer": "当たる。",
+      "sourceParagraphs": [
+        136
+      ]
+    },
+    {
+      "id": "sosoku1-124",
+      "category": "虚偽表示",
+      "question": "一度善意の第三者が現れた後の転得者は、悪意でも保護されるか。",
+      "answer": "保護される。先行する善意の第三者の地位を承継するため。",
+      "sourceParagraphs": [
+        137
+      ]
+    },
+    {
+      "id": "sosoku1-125",
+      "category": "虚偽表示",
+      "question": "第三者が売買予約完結権者である場合、善意・悪意はいつを基準に判断するか。",
+      "answer": "予約完結権を行使した時。",
+      "sourceParagraphs": [
+        138
+      ]
+    },
+    {
+      "id": "sosoku1-126",
+      "category": "虚偽表示",
+      "question": "原抵当権が仮装である場合、転抵当権者は虚偽表示の第三者に当たるか。",
+      "answer": "当たる。",
+      "sourceParagraphs": [
+        139
+      ]
+    },
+    {
+      "id": "sosoku1-127",
+      "category": "虚偽表示",
+      "question": "悪意の第三者から譲り受けた転得者が善意である場合、保護されるか。",
+      "answer": "善意の第三者として保護される。",
+      "sourceParagraphs": [
+        140
+      ]
+    },
+    {
+      "id": "sosoku1-128",
+      "category": "虚偽表示",
+      "question": "「第三者に当たるか」と「善意の第三者として保護されるか」は、分けて検討する必要があるか。",
+      "answer": "ある。第三者該当性と、保護のための善意の要件は区別する。",
+      "sourceParagraphs": [
+        141
+      ]
+    },
+    {
+      "id": "sosoku1-129",
+      "category": "錯誤",
+      "question": "意思表示に対応する意思を欠く錯誤と、基礎事情の錯誤は、同じ類型か。",
+      "answer": "異なる類型。前者は意思表示に対応する意思を欠く錯誤、後者は法律行為の基礎とした事情に関する錯誤。",
+      "sourceParagraphs": [
+        144
+      ]
+    },
+    {
+      "id": "sosoku1-130",
+      "category": "錯誤",
+      "question": "法律行為の基礎とした事情についての錯誤では、どのような表示が必要か。",
+      "answer": "その事情を法律行為の基礎としたことが表示されていること。",
+      "sourceParagraphs": [
+        145
+      ]
+    },
+    {
+      "id": "sosoku1-131",
+      "category": "錯誤",
+      "question": "表意者に重過失がある場合、錯誤による取消しは原則としてできるか。",
+      "answer": "原則としてできない。",
+      "sourceParagraphs": [
+        144,
+        145
+      ]
+    },
+    {
+      "id": "sosoku1-132",
+      "category": "錯誤",
+      "question": "表意者に重過失があっても錯誤による取消しが認められる、二つの例外は何か。",
+      "answer": "相手方が錯誤について悪意又は重過失である場合と、相手方も同一の錯誤に陥っていた場合。",
+      "sourceParagraphs": [
+        144,
+        145
+      ]
+    },
+    {
+      "id": "sosoku1-133",
+      "category": "錯誤",
+      "question": "錯誤による取消権を行使できるのは誰か。",
+      "answer": "本人、その代理人又は承継人。",
+      "sourceParagraphs": [
+        147
+      ]
+    },
+    {
+      "id": "sosoku1-134",
+      "category": "錯誤",
+      "question": "財産分与の課税について相手方が負担すると思い、その負担を気遣う発言をした場合など、基礎事情の黙示の表示が認められることはあるか。",
+      "answer": "ある。発言や相手方も同様の誤解をしていたことなどの事情から、黙示の表示が認められ得る。",
+      "sourceParagraphs": [
+        148
+      ]
+    },
+    {
+      "id": "sosoku1-135",
+      "category": "錯誤",
+      "question": "他にも連帯保証人がいると思って保証した場合、特段の事情がなければどの類型の錯誤か。",
+      "answer": "基礎事情の錯誤、すなわち動機の錯誤。",
+      "sourceParagraphs": [
+        149
+      ]
+    },
+    {
+      "id": "sosoku1-136",
+      "category": "錯誤",
+      "question": "他の連帯保証人の存在を基礎事情とする錯誤では、表示が必要か。",
+      "answer": "必要。",
+      "sourceParagraphs": [
+        149
+      ]
+    },
+    {
+      "id": "sosoku1-137",
+      "category": "錯誤",
+      "question": "財産分与や相続放棄のような財産上の行為には、錯誤の規定が適用されるか。",
+      "answer": "適用される。",
+      "sourceParagraphs": [
+        151
+      ]
+    },
+    {
+      "id": "sosoku1-138",
+      "category": "錯誤",
+      "question": "錯誤と担保責任の主張に、優先順位はあるか。",
+      "answer": "優先順位はない。",
+      "sourceParagraphs": [
+        153
+      ]
+    },
+    {
+      "id": "sosoku1-139",
+      "category": "錯誤",
+      "question": "詐欺と錯誤の両方を主張できる場合、どちらを主張するか選択できるか。",
+      "answer": "選択できる。",
+      "sourceParagraphs": [
+        155
+      ]
+    },
+    {
+      "id": "sosoku1-140",
+      "category": "錯誤",
+      "question": "他人物売買であることを知らずに購入しただけで、当然に錯誤による取消しが認められるか。",
+      "answer": "当然には認められない。基礎事情とその表示が問題となる。",
+      "sourceParagraphs": [
+        157
+      ]
+    },
+    {
+      "id": "sosoku1-141",
+      "category": "錯誤",
+      "question": "「他人物であれば購入しない」と表示していた場合、他人物であることについての錯誤による取消しが認められる余地はあるか。",
+      "answer": "ある。",
+      "sourceParagraphs": [
+        157
+      ]
+    },
+    {
+      "id": "sosoku1-142",
+      "category": "錯誤",
+      "question": "取消しの対象となる錯誤には、どのような重要性が必要か。",
+      "answer": "法律行為の目的及び取引上の社会通念に照らして重要なものであること。",
+      "sourceParagraphs": [
+        158
+      ]
+    },
+    {
+      "id": "sosoku1-143",
+      "category": "錯誤",
+      "question": "無償行為の受益者が取消し得ることを知らなかった場合、返還義務はどの範囲に限られるか。",
+      "answer": "現存利益の限度。",
+      "sourceParagraphs": [
+        159
+      ]
+    },
+    {
+      "id": "sosoku1-144",
+      "category": "錯誤",
+      "question": "錯誤又は詐欺による取消しは、善意無過失の第三者に対抗できるか。",
+      "answer": "対抗できない。",
+      "sourceParagraphs": [
+        160,
+        164
+      ]
+    },
+    {
+      "id": "sosoku1-145",
+      "category": "詐欺・強迫",
+      "question": "第三者による詐欺で意思表示をした場合、相手方についてどのような要件が必要か。",
+      "answer": "相手方が詐欺について悪意又は有過失であること。",
+      "sourceParagraphs": [
+        163
+      ]
+    },
+    {
+      "id": "sosoku1-146",
+      "category": "詐欺・強迫",
+      "question": "強迫による取消しには、詐欺と同様の第三者保護規定があるか。",
+      "answer": "ない。",
+      "sourceParagraphs": [
+        164
+      ]
+    },
+    {
+      "id": "sosoku1-147",
+      "category": "詐欺・強迫",
+      "question": "詐欺に必要な「二重の故意」とは何か。",
+      "answer": "相手を錯誤に陥らせる故意と、それによって意思表示をさせる故意。",
+      "sourceParagraphs": [
+        165
+      ]
+    },
+    {
+      "id": "sosoku1-148",
+      "category": "詐欺・強迫",
+      "question": "故意がない場合にも、詐欺による取消しができるか。",
+      "answer": "できない。錯誤による取消しなどが問題となる。",
+      "sourceParagraphs": [
+        165
+      ]
+    },
+    {
+      "id": "sosoku1-149",
+      "category": "詐欺・強迫",
+      "question": "詐欺・強迫による意思表示は、取り消される前から当然に無効か。",
+      "answer": "当然に無効ではない。取り消されるまでは一応効力を生じる。",
+      "sourceParagraphs": [
+        166
+      ]
+    },
+    {
+      "id": "sosoku1-150",
+      "category": "詐欺・強迫",
+      "question": "詐欺・錯誤の第三者保護規定の対象は、取消しの前に現れた第三者か、後に現れた第三者か。",
+      "answer": "取消し前に現れた第三者。",
+      "sourceParagraphs": [
+        167
+      ]
+    },
+    {
+      "id": "sosoku1-151",
+      "category": "詐欺・強迫",
+      "question": "原文では、取消し後に現れた第三者と取消者の関係をどのように整理しているか。",
+      "answer": "対抗関係と整理している。詐欺・錯誤だけでなく、強迫の取消しについても同様。",
+      "sourceParagraphs": [
+        167,
+        169
+      ]
+    },
+    {
+      "id": "sosoku1-152",
+      "category": "詐欺・強迫",
+      "question": "詐欺取消しで保護される第三者には、どのような利害関係が必要か。",
+      "answer": "詐欺によって生じた事実関係に基づいて、新たな利害関係を有するに至ったこと。",
+      "sourceParagraphs": [
+        168
+      ]
+    },
+    {
+      "id": "sosoku1-153",
+      "category": "詐欺・強迫",
+      "question": "第三者による強迫では、意思表示の相手方が善意でも取り消せるか。",
+      "answer": "取り消せる。",
+      "sourceParagraphs": [
+        170
+      ]
+    },
+    {
+      "id": "sosoku1-154",
+      "category": "詐欺・強迫",
+      "question": "強迫によって畏怖を感じて意思表示をした場合と、意思の自由を完全に失った場合とで、効果は同じか。",
+      "answer": "同じではない。前者は取消しの問題となり、後者は取り消すまでもなく無効となる。",
+      "sourceParagraphs": [
+        171
+      ]
+    }
+  ],
+  "review": [
+    {
+      "id": "corporation-residual",
+      "category": "社団・法人",
+      "title": "残余財産と社団・財団の区別",
+      "note": "一般社団法人と一般財団法人のどちらについての記述かが未確定。定款と決議の扱いも確認中。",
+      "sourceParagraphs": [
+        109
+      ]
+    },
+    {
+      "id": "marriage-mistake",
+      "category": "錯誤",
+      "title": "身分行為・婚姻の錯誤",
+      "note": "「婚姻」「錯誤」の表記と、婚姻無効の記述との関係を確認中。",
+      "sourceParagraphs": [
+        121,
+        150
+      ]
+    },
+    {
+      "id": "offer-negligence",
+      "category": "意思表示総論",
+      "title": "申込者の死亡と相手方の過失",
+      "note": "原文の「悪意または有過失」のうち、過失だけの場合は出題保留。学習問題では、死亡を知った場合だけを扱う。",
+      "sourceParagraphs": [
+        122
+      ]
+    },
+    {
+      "id": "confirmation-detail",
+      "category": "取消し・追認",
+      "title": "催告の相手と代理の例外",
+      "note": "催告の相手方の範囲と、法定代理の例外の適用範囲が省略されているため、その部分は出題保留。",
+      "sourceParagraphs": [
+        51,
+        54,
+        60
+      ]
+    },
+    {
+      "id": "assistance-consent",
+      "category": "成年後見・保佐・補助",
+      "title": "補助開始と本人の同意",
+      "note": "本人が請求する場合との区別が原文では省略されているため、出題保留。",
+      "sourceParagraphs": [
+        34
+      ]
+    },
+    {
+      "id": "representation",
+      "category": "社団・法人",
+      "title": "複数の理事と代表理事",
+      "note": "各理事が代表する場合と、代表理事を定めた場合との関係を確認中。",
+      "sourceParagraphs": [
+        102
+      ]
+    },
+    {
+      "id": "old-mistake",
+      "category": "錯誤",
+      "title": "改正前の錯誤に関する記述",
+      "note": "第三者による無効主張と空クレジットの記述は、現行法での整理を確認するまで出題保留。",
+      "sourceParagraphs": [
+        146,
+        156
+      ]
+    }
+  ]
+}
