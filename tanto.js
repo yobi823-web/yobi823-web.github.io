@@ -1,34 +1,45 @@
 (() => {
   'use strict';
-  const STORAGE_KEY = 'tanto:study:sosoku-1:v1';
+  const DECKS = {
+    sosoku1:{title:'総則1',id:'tanto-sosoku-1',file:'./decks/tanto-sosoku-1.json?v=decks2',storageKey:'tanto:study:sosoku-1:v1'},
+    sosoku2:{title:'総則2',id:'tanto-sosoku-2',file:'./decks/tanto-sosoku-2.json?v=decks2',storageKey:'tanto:study:sosoku-2:v1'}
+  };
+  const SELECTED_KEY = 'tanto:selected-deck:v1';
+  const emptyState = () => ({records:{},category:'',filter:'all',shuffle:false,currentId:''});
+  const memoryStates = new Map(), loadedDecks = new Map();
   const $ = id => document.getElementById(id);
   const labels = {new:'未学習',again:'もう一度',known:'覚えた'};
   let deck, questions = [], queue = [], blanks = [], position = 0, answered = false, completed = false, toastTimer;
-  let state = {records:{},category:'',filter:'all',shuffle:false,currentId:''};
+  let state = emptyState();
+  let storageKey = DECKS.sosoku1.storageKey, requestedDeckId = 'sosoku1', loadRequest = 0;
   let storageAvailable = true;
 
   function readState() {
+    state = emptyState();
+    let stored;
     try {
-      const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
-      if (!stored || typeof stored !== 'object') return;
-      const records = {};
-      if (stored.records && typeof stored.records === 'object') {
-        for (const [id, value] of Object.entries(stored.records)) {
-          if (value && ['known','again'].includes(value.status)) records[id] = value;
-        }
-      }
-      state = {
-        records,
-        category:typeof stored.category === 'string' ? stored.category : '',
-        filter:['all','new','again','known'].includes(stored.filter) ? stored.filter : 'all',
-        shuffle:stored.shuffle === true,
-        currentId:typeof stored.currentId === 'string' ? stored.currentId : ''
-      };
+      stored = JSON.parse(memoryStates.get(storageKey) || localStorage.getItem(storageKey) || 'null');
     } catch (_) { storageAvailable = false; }
+    if (!stored || typeof stored !== 'object') return;
+    const records = {};
+    if (stored.records && typeof stored.records === 'object') {
+      for (const [id, value] of Object.entries(stored.records)) {
+        if (value && ['known','again'].includes(value.status)) records[id] = value;
+      }
+    }
+    state = {
+      records,
+      category:typeof stored.category === 'string' ? stored.category : '',
+      filter:['all','new','again','known'].includes(stored.filter) ? stored.filter : 'all',
+      shuffle:stored.shuffle === true,
+      currentId:typeof stored.currentId === 'string' ? stored.currentId : ''
+    };
   }
 
   function save() {
-    try {localStorage.setItem(STORAGE_KEY, JSON.stringify(state));}
+    const serialized = JSON.stringify(state);
+    memoryStates.set(storageKey,serialized);
+    try {localStorage.setItem(storageKey,serialized);}
     catch (_) {storageAvailable = false;}
     $('saveStatus').textContent = storageAvailable
       ? '学習記録と続きの位置は、この端末に保存されます。'
@@ -249,6 +260,8 @@
   }
 
   function bind() {
+    $('deckSelect').addEventListener('change',event => loadDeck(event.target.value));
+    $('retryLoad').addEventListener('click',() => loadDeck(requestedDeckId));
     $('reveal').addEventListener('click',reveal);
     $('known').addEventListener('click',() => grade('known'));
     $('again').addEventListener('click',() => grade('again'));
@@ -262,7 +275,7 @@
     $('reviewAgain').addEventListener('click',() => {state.filter='again';$('filter').value='again';begin();});
     $('questionList').addEventListener('toggle',renderList);
     document.addEventListener('keydown',event => {
-      if (event.altKey || event.ctrlKey || event.metaKey || event.repeat || completed) return;
+      if ($('app').hidden || event.altKey || event.ctrlKey || event.metaKey || event.repeat || completed) return;
       if (event.target.closest('button,select,input,textarea,a,summary')) return;
       if (event.code === 'Space') {event.preventDefault();reveal();}
       if (event.key === 'ArrowRight') {event.preventDefault();next();}
@@ -283,44 +296,79 @@
     return parts;
   }
 
-  async function init() {
-    try {
-      const response = await fetch('./decks/tanto-sosoku-1.json?v=group1');
-      if (!response.ok) throw new Error(`教材を取得できませんでした (${response.status})`);
-      deck = await response.json();
-      if (!Array.isArray(deck.questions) || !deck.questions.length) throw new Error('教材に問題がありません');
-      questions = deck.questions;
-      const ids = new Set();
-      for (const q of questions) {
-        if (!q.id || ids.has(q.id) || typeof q.cloze!=='string' || !q.cloze.trim() || typeof q.category!=='string') throw new Error('教材の形式が正しくありません');
-        q.parts = parseCloze(q.cloze);
-        if (!q.parts.some(part => part.blank)) throw new Error('黒塗りがありません');
-        if (q.items !== undefined) {
-          if (!Array.isArray(q.items) || !q.items.length) throw new Error('箇条書きの形式が正しくありません');
-          q.promptParts = parseCloze(q.prompt);
-          q.itemParts = q.items.map(parseCloze);
-          if (q.itemParts.some(parts => !parts.some(part => part.blank))) throw new Error('箇条書きに黒塗りがありません');
-        }
-        ids.add(q.id);
+  function validateDeck(data,expectedId) {
+    if (data?.id !== expectedId || !Array.isArray(data.questions) || !data.questions.length) throw new Error('教材に問題がありません');
+    const ids = new Set();
+    for (const q of data.questions) {
+      if (!q.id || ids.has(q.id) || typeof q.cloze!=='string' || !q.cloze.trim() || typeof q.category!=='string') throw new Error('教材の形式が正しくありません');
+      q.parts = parseCloze(q.cloze);
+      if (!q.parts.some(part => part.blank)) throw new Error('黒塗りがありません');
+      if (q.items !== undefined) {
+        if (!Array.isArray(q.items) || !q.items.length) throw new Error('箇条書きの形式が正しくありません');
+        q.promptParts = parseCloze(q.prompt);
+        q.itemParts = q.items.map(parseCloze);
+        if (q.itemParts.some(parts => !parts.some(part => part.blank))) throw new Error('箇条書きに黒塗りがありません');
       }
+      ids.add(q.id);
+    }
+    return data;
+  }
+
+  function initialDeck() {
+    const fromUrl = new URL(location.href).searchParams.get('deck');
+    if (Object.hasOwn(DECKS,fromUrl)) return fromUrl;
+    try {
+      const saved = localStorage.getItem(SELECTED_KEY);
+      if (Object.hasOwn(DECKS,saved)) return saved;
+    } catch (_) {storageAvailable=false;}
+    return 'sosoku1';
+  }
+
+  async function loadDeck(id) {
+    if (!Object.hasOwn(DECKS,id)) return;
+    const request = ++loadRequest, config = DECKS[id];
+    requestedDeckId = id;
+    $('deckSelect').value=id;
+    $('loading').textContent=`${config.title}を読み込んでいます。`;
+    $('loading').hidden=false;$('loadError').hidden=true;$('app').hidden=true;
+    $('toast').hidden=true;
+    try {
+      let data = loadedDecks.get(id);
+      if (!data) {
+        const response = await fetch(config.file);
+        if (!response.ok) throw new Error(`教材を取得できませんでした (${response.status})`);
+        data = validateDeck(await response.json(),config.id);
+        loadedDecks.set(id,data);
+      }
+      if (request !== loadRequest) return;
+      deck=data;questions=data.questions;storageKey=config.storageKey;
       readState();
       migrateGroupedState();
       const categories = [...new Set(questions.map(q => q.category))];
       if (!categories.includes(state.category)) state.category='';
+      const allOption=document.createElement('option');allOption.value='';allOption.textContent='すべての分野';
+      $('category').replaceChildren(allOption);
       for (const category of categories) {
         const option = document.createElement('option');option.value=category;option.textContent=category;$('category').append(option);
       }
-      $('deckTitle').textContent = deck.title;
+      $('deckTitle').textContent = config.title;
       $('totalCount').textContent = `${questions.length}問 · ${categories.length}分野`;
+      $('sourceTitle').textContent = `教材：${deck.sourceTitle}`;
       $('category').value=state.category;$('filter').value=state.filter;
-      bind();renderReview();
+      $('questionList').open=false;$('reviewNotes').open=false;
+      renderReview();
       $('loading').hidden=true;$('app').hidden=false;
+      document.title=`タントー君 — ${config.title}の穴埋め学習`;
+      try {localStorage.setItem(SELECTED_KEY,id);} catch (_) {storageAvailable=false;}
+      const url=new URL(location.href);url.searchParams.set('deck',id);
+      history.replaceState(null,'',url);
       begin({resume:true});
     } catch(error) {
+      if (request !== loadRequest) return;
       console.error('タントー君:',error);
-      $('loading').hidden=true;$('loadError').hidden=false;
+      $('loading').hidden=true;$('loadError').hidden=false;$('app').hidden=true;
     }
   }
-  $('retryLoad').addEventListener('click',() => location.reload());
+  function init() {bind();loadDeck(initialDeck());}
   init();
 })();

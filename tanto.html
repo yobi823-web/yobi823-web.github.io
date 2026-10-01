@@ -11,9 +11,9 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
   <link rel="icon" href="./icon-192.png" sizes="192x192">
-  <link rel="stylesheet" href="./tanto.css?v=group1">
+  <link rel="stylesheet" href="./tanto.css?v=decks2">
   <title>タントー君 — 民法総則の穴埋め学習</title>
-  <script src="./tanto.js?v=group1" defer></script>
+  <script src="./tanto.js?v=decks2" defer></script>
   <script src="./pwa.js" defer></script>
 </head>
 <body>
@@ -23,11 +23,12 @@
       <div class="brand"><span class="brand-icon" aria-hidden="true">タ</span><div><h1>タントー君</h1><p>民法総則の穴埋め学習</p></div></div>
     </header>
     <main id="main">
+      <div class="deck-picker"><label for="deckSelect">教材</label><select id="deckSelect"><option value="sosoku1">総則1</option><option value="sosoku2">総則2</option></select></div>
       <div id="loading" class="message" role="status">教材を読み込んでいます。</div>
       <div id="loadError" class="message error" role="alert" hidden><p>教材を読み込めませんでした。通信を確認して再読み込みしてください。</p><button id="retryLoad" type="button" class="button primary">再読み込み</button></div>
       <div id="app" hidden>
         <section class="study-controls" aria-label="出題範囲">
-          <div class="deck-line"><h2 id="deckTitle">民法総則 1</h2><span id="totalCount" class="total-count"></span></div>
+          <div class="deck-line"><h2 id="deckTitle">総則1</h2><span id="totalCount" class="total-count"></span></div>
           <div class="filters">
             <div class="field category-field"><label for="category">分野</label><select id="category"><option value="">すべての分野</option></select></div>
             <div class="field"><label for="filter">学習状況</label><select id="filter"><option value="all">すべて</option><option value="new">未学習</option><option value="again">もう一度</option><option value="known">覚えた</option></select></div>
@@ -50,7 +51,7 @@
         <section id="complete" class="message complete" hidden><div class="completion-mark" aria-hidden="true">✓</div><h2>この範囲を一周しました</h2><p id="completeStats"></p><div class="completion-actions"><button id="restart" type="button" class="button primary">もう一周する</button><button id="reviewAgain" type="button" class="button">もう一度の問題を復習</button></div></section>
         <details id="questionList" class="question-list"><summary>問題一覧 <span id="listCount"></span></summary><div id="list"></div></details>
         <details id="reviewNotes" class="review-notes"><summary>確認中の項目 <span id="reviewCount"></span></summary><p>内容が確定するまで、この部分は出題していません。</p><div id="reviewList"></div></details>
-        <footer class="app-footer"><p id="saveStatus" role="status">学習記録と続きの位置は、この端末に保存されます。</p><p class="source">教材：短答対策＿総１</p><p id="pwaStatus" class="offline-status"></p></footer>
+        <footer class="app-footer"><p id="saveStatus" role="status">学習記録と続きの位置は、この端末に保存されます。</p><p id="sourceTitle" class="source"></p><p id="pwaStatus" class="offline-status"></p></footer>
       </div>
     </main>
     <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
