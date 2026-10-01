@@ -1,8 +1,8 @@
 (() => {
   'use strict';
   const DECKS = {
-    sosoku1:{title:'総則1',id:'tanto-sosoku-1',file:'./decks/tanto-sosoku-1.json?v=decks2',storageKey:'tanto:study:sosoku-1:v1'},
-    sosoku2:{title:'総則2',id:'tanto-sosoku-2',file:'./decks/tanto-sosoku-2.json?v=decks2',storageKey:'tanto:study:sosoku-2:v1'}
+    sosoku1:{title:'総則1',id:'tanto-sosoku-1',file:'./decks/tanto-sosoku-1.json?v=decks3',storageKey:'tanto:study:sosoku-1:v1'},
+    sosoku2:{title:'総則2',id:'tanto-sosoku-2',file:'./decks/tanto-sosoku-2.json?v=decks3',storageKey:'tanto:study:sosoku-2:v1'}
   };
   const SELECTED_KEY = 'tanto:selected-deck:v1';
   const emptyState = () => ({records:{},category:'',filter:'all',shuffle:false,currentId:''});

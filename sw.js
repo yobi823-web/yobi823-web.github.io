@@ -1,4 +1,4 @@
-const CACHE = 'ronsho-pwa-20261001-v13-sosoku2';
+const CACHE = 'ronsho-pwa-20261001-v14-sosoku2-answers';
 const CORE = [
   './',
   './index.html',
@@ -7,10 +7,10 @@ const CORE = [
   './tanto.js',
   './decks/tanto-sosoku-1.json',
   './decks/tanto-sosoku-2.json',
-  './tanto.css?v=decks2',
-  './tanto.js?v=decks2',
-  './decks/tanto-sosoku-1.json?v=decks2',
-  './decks/tanto-sosoku-2.json?v=decks2',
+  './tanto.css?v=decks3',
+  './tanto.js?v=decks3',
+  './decks/tanto-sosoku-1.json?v=decks3',
+  './decks/tanto-sosoku-2.json?v=decks3',
   './anki.html',
   './anki-app.html',
   './noriben.html',
