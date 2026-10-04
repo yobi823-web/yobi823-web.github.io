@@ -1,0 +1,18 @@
+{
+  "name": "M4A Player",
+  "short_name": "M4A Player",
+  "description": "端末内のM4A・MP3などをローカル再生するプレーヤー",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0d12",
+  "theme_color": "#101218",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
