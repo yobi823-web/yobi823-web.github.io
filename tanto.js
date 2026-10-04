@@ -1,10 +1,11 @@
 (() => {
   'use strict';
   const DECKS = {
-    sosoku1:{title:'総則1',id:'tanto-sosoku-1',file:'./decks/tanto-sosoku-1.json?v=decks5',storageKey:'tanto:study:sosoku-1:v1'},
-    sosoku2:{title:'総則2',id:'tanto-sosoku-2',file:'./decks/tanto-sosoku-2.json?v=decks5',storageKey:'tanto:study:sosoku-2:v1'},
-    bukken:{title:'物権',id:'tanto-bukken',file:'./decks/tanto-bukken.json?v=decks5',storageKey:'tanto:study:bukken:v1'},
-    tanpo:{title:'担保',id:'tanto-tanpo',file:'./decks/tanto-tanpo.json?v=decks5',storageKey:'tanto:study:tanpo:v1'}
+    sosoku1:{title:'総則1',id:'tanto-sosoku-1',file:'./decks/tanto-sosoku-1.json?v=decks6',storageKey:'tanto:study:sosoku-1:v1'},
+    sosoku2:{title:'総則2',id:'tanto-sosoku-2',file:'./decks/tanto-sosoku-2.json?v=decks6',storageKey:'tanto:study:sosoku-2:v1'},
+    bukken:{title:'物権',id:'tanto-bukken',file:'./decks/tanto-bukken.json?v=decks6',storageKey:'tanto:study:bukken:v1'},
+    tanpo:{title:'担保',id:'tanto-tanpo',file:'./decks/tanto-tanpo.json?v=decks6',storageKey:'tanto:study:tanpo:v1'},
+    saiken:{title:'債権総論',id:'tanto-saiken-soron',file:'./decks/tanto-saiken-soron.json?v=decks6',storageKey:'tanto:study:saiken-soron:v1'}
   };
   const SELECTED_KEY = 'tanto:selected-deck:v1';
   const emptyState = () => ({records:{},category:'',filter:'all',shuffle:false,currentId:''});
