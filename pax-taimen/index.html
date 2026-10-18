@@ -1,0 +1,77 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>PAX::UNDEFINED 対面戦</title>
+<style>
+:root{--bg:#ece6d8;--ce:#ddd3bb;--ln:#a99d80;--tx:#26221b;--pn:#f7f2e6;--p0:#b8352a;--p1:#245fa8;--c:min(calc(100vw/13),calc((100vh - 330px)/11));box-sizing:border-box;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1c1a16;--ce:#38322a;--ln:#554d3f;--tx:#eee7d8;--pn:#27231e}}
+:root[data-theme="dark"]{--bg:#1c1a16;--ce:#38322a;--ln:#554d3f;--tx:#eee7d8;--pn:#27231e}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--tx);font:15px system-ui,"Hiragino Sans","Noto Sans JP",sans-serif;display:flex;flex-direction:column;align-items:center;gap:4px}
+.pn{flex:1;min-height:0;width:calc(var(--c)*13);max-width:100%;background:var(--pn);border:1px solid var(--ln);border-radius:10px;padding:6px 10px;overflow:auto;box-sizing:border-box}
+.t{transform:rotate(180deg)}
+.lg{font-size:12px;opacity:.8;margin:3px 0}.ms{font-weight:600;margin:4px 0}
+button{font:inherit;min-height:44px;padding:0 14px;margin:3px;border-radius:8px;border:1px solid var(--ln);background:var(--ce);color:var(--tx)}
+#bd{display:grid;grid-template-columns:repeat(13,var(--c));grid-auto-rows:var(--c)}
+.ce{position:relative;border:1px solid var(--ln);background:var(--ce);box-sizing:border-box}
+.hl{background:#f1c40f66;box-shadow:inset 0 0 0 3px #e0a800}
+.m{position:absolute;top:0;left:2px;font-size:calc(var(--c)*.2);text-decoration:none;opacity:.8}.a0{color:var(--p0)}.a1{color:var(--p1)}
+.pc{position:absolute;inset:7px;border-radius:7px;border:3px solid;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;font-weight:700}
+.s0{background:#f3c9c2;border-color:var(--p0);color:#5e1810}.s1{background:#c3d9f1;border-color:var(--p1);color:#12355e}
+.k{font-size:calc(var(--c)*.32)}.fm{font-size:calc(var(--c)*.2)}.hp{font-size:calc(var(--c)*.16);letter-spacing:1px}
+.sel{outline:4px solid #e0a800}.dn{opacity:.5}
+.ar{position:absolute;inset:-7px;pointer-events:none}
+.ar::before{content:"";position:absolute;top:0;left:50%;margin-left:-7px;border:7px solid transparent;border-top:0;border-bottom:11px solid var(--tx)}
+.zz{position:absolute;right:1px;top:0;font-size:calc(var(--c)*.2)}
+</style></head><body>
+<div id="p0" class="pn t"></div><div id="bd"></div><div id="p1" class="pn"></div>
+<script>
+const D=[[0,-1],[1,0],[0,1],[-1,0]],AR='↑→↓←',NM={I:'歩',A:'弓',C:'騎',K:'将',D:'下'},BA={I:4,A:2,C:3,K:5,D:6};
+const FM={I:{yoko:['横陣',2,2],hoshi:['鋒矢',4,0],hoi:['包囲',1,1],taiki:['対騎',0,0]},A:{retsu:['横列',-2,-2],san:['散開',0,0],han:['半月',0,0]},C:{hoshi:['鋒矢',0,-3],tei:['梯形',0,0],san:['散開',0,3]},K:{none:['',0,0]},D:{down:['下馬',0,0]}};
+const S0={I:'D4 F4 L3 H4 J4 C3 E3 I3 K3 B3',A:'D2 G3 J2',C:'A3 M3',K:'G1'},S1={I:'D8 F8 B9 H8 J8 C9 E9 I9 K9 L9',A:'D10 G9 J10',C:'A9 M9',K:'G11'},INI={I:'yoko',A:'retsu',C:'hoshi',K:'none'};
+let P=[],RL=[{x:2,y:5},{x:10,y:5}],hl=[],res=null,ui={s:-1,m:'',o:[]},LOG=[],cur=0,n=0,LIM=5,over=0,sel=null;
+[S0,S1].forEach((S,s)=>{for(const t in S)S[t].split(' ').forEach(c=>P.push({s,t,x:c.charCodeAt(0)-65,y:+c.slice(1)-1,d:s?0:2,f:INI[t],hp:3,acted:0,stun:0}))});
+const $=i=>document.getElementById(i),inb=(x,y)=>x>=0&&y>=0&&x<13&&y<11,at=(x,y)=>P.find(p=>p.x==x&&p.y==y),say=t=>{LOG.push(t);if(LOG.length>4)LOG.shift()};
+const pc=p=>`<div class="pc s${p.s}${p===sel?' sel':''}${p.acted||p.stun?' dn':''}"><span class="k">${NM[p.t]}</span><span class="fm">${FM[p.t][p.f][0].slice(0,1)||'・'}</span><span class="hp">${'●'.repeat(p.hp)+'○'.repeat(3-p.hp)}</span><i class="ar" style="transform:rotate(${p.d*90}deg)"></i>${p.stun?'<b class="zz">休</b>':''}</div>`;
+function pan(s){const a=ui.s==s&&!over||ui.s==s;return `<div><b style="color:var(--p${s})">第${s+1}陣営</b> ${cur==s&&!over?'【手番】行動 '+n+'/'+LIM:''}　◎${RL.map(r=>r.o===undefined?'−':'第'+(r.o+1)).join(' ')}</div><div class="lg">${LOG.join('<br>')}</div>`+(a?`<div class="ms">${ui.m}</div>${sel?`<div>${NM[sel.t]} ${FM[sel.t][sel.f][0]} 兵${sel.hp} 向${AR[sel.d]}</div>`:''}${ui.o.map((o,i)=>`<button onclick="pk(${i})">${o[0]}</button>`).join('')}`:`<div class="ms">相手の操作待ち</div>`)}
+function render(){let h='';for(let y=0;y<11;y++)for(let x=0;x<13;x++){const p=at(x,y),hq=x==6&&(y==1||y==9)?(y==1?0:1):-1,rl=RL.find(r=>r.x==x&&r.y==y),on=hl.some(a=>a[0]==x&&a[1]==y);h+=`<div class="ce${on?' hl':''}" onclick="cl(${x},${y})">${hq>=0?`<u class="m a${hq}">本</u>`:''}${rl?`<u class="m a${rl.o??''}">◎</u>`:''}${p?pc(p):''}</div>`}$('bd').innerHTML=h;$('p0').innerHTML=pan(0);$('p1').innerHTML=pan(1)}
+function ask(s,m,o=[],c=[],f){if(over&&!f)return new Promise(()=>{});ui={s,m,o};hl=c;render();return new Promise(r=>res=r)}
+function done(v){const r=res;res=null;ui.o=[];hl=[];r&&r(v)}
+function pk(i){done(ui.o[i][1])}function cl(x,y){if(res&&hl.some(a=>a[0]==x&&a[1]==y))done({x,y})}
+function moves(p){const fv=D[p.d],rr=[-fv[1],fv[0]],c=p.t=='C',o=[];[[1,0,2,'f'],[1,1,c?2:1,'d'],[1,-1,c?2:1,'d'],[0,1,c?2:1,'s'],[0,-1,c?2:1,'s'],[-1,0,1,'b']].forEach(([a,b,k,t])=>{const vx=a*fv[0]+b*rr[0],vy=a*fv[1]+b*rr[1];for(let i=1;i<=k;i++){const x=p.x+vx*i,y=p.y+vy*i;if(!inb(x,y)||at(x,y))break;o.push({x,y,n:i,k:t})}});return o}
+function targets(p){const fv=D[p.d],rr=[-fv[1],fv[0]],r=[[1,0]];if(p.t=='C'&&p.f=='tei')r.push([1,1],[1,-1]);return r.map(([a,b])=>{const q=at(p.x+a*fv[0]+b*rr[0],p.y+a*fv[1]+b*rr[1]);return q&&q.s!=p.s?{q,diag:!!b}:0}).filter(Boolean)}
+function face(d,a,tei){const fv=D[d.d],vx=a.x-d.x,vy=a.y-d.y,f=vx*fv[0]+vy*fv[1],l=-vx*fv[1]+vy*fv[0];if(tei)return -3;if(f>0)return 0;if(f==0)return -3;return l==0?-5:-3}
+function sup(x,y,s){let i=0,b=0,c=0;P.forEach(u=>{if(u.s!=s||u===x)return;const vx=y.x-u.x,vy=y.y-u.y,f=vx*D[u.d][0]+vy*D[u.d][1],l=-vx*D[u.d][1]+vy*D[u.d][0];
+if(u.t=='I'&&Math.max(Math.abs(vx),Math.abs(vy))==1&&f>0)i+=u.f=='hoi'?2:1;
+if(u.t=='A'&&Math.abs(vx)+Math.abs(vy)<=3)b=Math.max(b,u.f=='retsu'?2:u.f=='san'?1:u.f=='han'&&l==0&&f>=1&&f<=3?4:0);
+if(u.t=='K'&&x.t=='I'&&Math.max(Math.abs(x.x-u.x),Math.abs(x.y-u.y))<=2)c=1});return[i,b,c]}
+function val(x,y,att,ch,tei){const f=FM[x.t][x.f],pt=[['基',BA[x.t]],['陣',att?f[1]:f[2]],['兵',x.hp-3]];let fc=0;if(!att){fc=face(x,y,tei);pt.push(['向',fc])}
+if(x.f=='taiki'&&y.t=='C'&&(att||fc==0))pt.push(['対騎',10]);if(att&&ch)pt.push([ch==2?'大突撃':'小突撃',(ch==2?7:3)+(x.f=='hoshi'?4:0)]);
+const su=sup(x,y,x.s);pt.push(['歩支',su[0]],['弓支',su[1]],['将支',su[2]],['中継',RL.filter(r=>r.o===x.s).length]);let t=0,s='';pt.forEach(([k,v])=>{t+=v;if(v)s+=k+(v>0?'+':'')+v+' '});return{t,s,r:1+Math.floor(Math.random()*6)}}
+function kill(p){P=P.filter(q=>q!==p);if(p.t=='K')win(1-p.s,'指揮官撃破')}
+function win(s,w){over=1;say(`第${s+1}陣営の勝利（${w}）`);ask(s,'勝利！',[['もう一度',1]],[],1).then(()=>location.reload())}
+async function fight(a,d,ch,tei){const vx=Math.sign(d.x-a.x),vy=Math.sign(d.y-a.y),rx=d.x+vx,ry=d.y+vy,cr=inb(rx,ry)&&!at(rx,ry);
+const v=await ask(d.s,`${NM[a.t]}に攻撃されます。交戦か撤退か選択`,cr?[['交戦','f'],['撤退','r']]:[['交戦（撤退不可）','f']]);
+if(v=='r'){d.x=rx;d.y=ry;d.stun=1;say('撤退：次の手番は行動不可');return{ret:1}}
+const A=val(a,d,1,ch,tei),B=val(d,a,0,0,tei),x=A.t+A.r,y=B.t+B.r;say(`攻 ${A.s}＝${A.t}+🎲${A.r}＝${x}`);say(`防 ${B.s}＝${B.t}+🎲${B.r}＝${y}`);
+let g=0,cd=0;if(x>y)g=x>=2*y?2:1;else if(y>x&&y>=2*x)cd=1;say(g?`防御側 兵−${g}`:cd?'反撃：攻撃側 兵−1':'変化なし');
+await ask(a.s,'結果を確認',[['OK',1]]);if(cd){a.hp--;if(a.hp<=0)kill(a)}if(g){d.hp-=g;if(d.hp<=0)kill(d)}return{hit:g>0,dead:d.hp<=0}}
+async function attack(a,d,ch,tei){while(true){const ox=d.x,oy=d.y,r=await fight(a,d,ch,tei);if(over||r.ret||!r.hit||a.hp<=0)return;const vx=Math.sign(ox-a.x),vy=Math.sign(oy-a.y);let again=0;
+const adv=async()=>ch==1||await ask(a.s,'進撃しますか？',[['進撃','y'],['留まる','n']])=='y';
+if(r.dead){if(!at(ox,oy)&&await adv()){a.x=ox;a.y=oy}return}
+if(ch==2){const bx=ox+vx,by=oy+vy;if(inb(bx,by)&&!at(bx,by)){a.x=bx;a.y=by;a.d=(a.d+2)%4;say('突破')}else{d.hp--;say('圧殺');if(d.hp<=0){kill(d);return}}again=1}
+else{const px=ox+vx,py=oy+vy;if(inb(px,py)&&!at(px,py)){d.x=px;d.y=py;if(await adv()){a.x=ox;a.y=oy;again=1}}else{d.hp--;say('圧殺');if(d.hp<=0){kill(d);return}again=1}}
+if(!again||await ask(a.s,'再攻撃しますか？',[['再攻撃','y'],['やめる','n']])!='y')return;const t=targets(a).find(z=>z.q===d);if(!t)return;ch=0;tei=t.diag}}
+async function hit(s,p,tg,ch){let t=tg[0];if(tg.length>1){const c=await ask(s,'攻撃対象を選択',[],tg.map(z=>[z.q.x,z.q.y]));t=tg.find(z=>z.q.x==c.x&&z.q.y==c.y)}await attack(p,t.q,ch,t.diag)}
+async function doA(s,p){const mv=moves(p);if(!mv.length){say('移動できません');return 0}const c=await ask(s,'移動先を選択',[['戻る','x']],mv.map(m=>[m.x,m.y]));if(c=='x')return 0;const m=mv.find(m=>m.x==c.x&&m.y==c.y);p.x=m.x;p.y=m.y;
+const ch=p.t=='C'&&(m.k=='f'||m.k=='d')?m.n:0,tg=targets(p);if(tg.length&&await ask(s,'攻撃しますか？',[['攻撃','y'],['攻撃せず終了','n']])=='y')await hit(s,p,tg,ch);return 1}
+async function doD(s,p){const tg=targets(p);if(!tg.length){say('攻撃対象なし');return 0}await hit(s,p,tg,0);return 1}
+async function doC(s,p){const o=[0,1,2,3].map(d=>[d,p.x+D[d][0],p.y+D[d][1]]).filter(o=>inb(o[1],o[2])&&!at(o[1],o[2]));if(!o.length)return 0;const c=await ask(s,'前進先のマスを選択（向きも変わる）',[['戻る','x']],o.map(o=>[o[1],o[2]]));if(c=='x')return 0;const q=o.find(o=>o[1]==c.x&&o[2]==c.y);p.d=q[0];p.x=c.x;p.y=c.y;return 1}
+async function doB(s,p){const d=await ask(s,'向きを選択',[...AR].map((a,i)=>[a,i]).concat([['戻る','x']]));if(d=='x')return 0;const fs=Object.keys(FM[p.t]);let f=p.f;
+if(fs.length>1||p.t=='C'){const os=fs.map(k=>[FM[p.t][k][0]+(k==p.f?'（現在）':''),k]);if(p.t=='C')os.push(['下馬（戻れません）','down']);f=await ask(s,'陣形を選択',os)}
+if(d==p.d&&f==p.f){say('変更なしは不可');return 0}p.d=d;if(f=='down'){p.t='D';p.f='down'}else p.f=f;return 1}
+async function act(s,av){const r=await ask(s,`動かすコマを選択（${n}/${LIM}）`,[],av.map(p=>[p.x,p.y])),p=at(r.x,r.y);sel=p;
+const a=await ask(s,'行動を選択',[['A 移動＋攻撃','A'],['B 向き・陣形','B'],['C 向き変更＋前進1','C'],['D その場攻撃','D'],['戻る','x']]);
+const ok=a=='A'?await doA(s,p):a=='B'?await doB(s,p):a=='C'?await doC(s,p):a=='D'?await doD(s,p):0;sel=null;if(ok)p.acted=1;return ok}
+function end(s){P.forEach(p=>{if(p.s==s){p.acted=0;p.stun=0}});RL.forEach(r=>{const o=at(r.x,r.y);if(r.cl&&o!==r.cl.p)r.cl=null;if(r.cl&&r.cl.s!=s){r.o=r.cl.s;r.cl=null;say('中継地点を占領')}if(!r.cl&&o&&o.s==s&&r.o!==s)r.cl={p:o,s}})}
+async function loop(){while(!over){const s=cur;n=0;if(P.some(p=>p.s==s&&p.x==6&&p.y==(s?1:9))){win(s,'敵本陣を保持');break}
+while(!over){const av=P.filter(p=>p.s==s&&!p.acted&&!p.stun);if(n>=LIM||!av.length)break;if(await act(s,av))n++}if(over)break;end(s);cur=1-s}}
+(async()=>{LIM=await ask(1,'ルールセットを選択',[['1.0 STANDARD（5コマ）',5],['1.1 TACTICAL（3コマ）',3]]);let a,b;do{a=1+Math.floor(Math.random()*6);b=1+Math.floor(Math.random()*6);say(`先攻決定 第1陣営:${a} 第2陣営:${b}`)}while(a==b);cur=a>b?0:1;await ask(cur,`先攻は第${cur+1}陣営です`,[['開始',1]]);loop()})();
+</script></body></html>
