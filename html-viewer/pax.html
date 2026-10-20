@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#191f29">
+<title>PAX 駒台座 3Dプレビュー（オフライン対応）</title>
+<style>
+:root{color-scheme:dark;--bg:#121a24;--panel:#1f2c3b;--line:#48596c;--txt:#f5f6fa;--sub:#c1cddd;--accent:#e0bb6f;box-sizing:border-box}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px system-ui,"Hiragino Sans","Noto Sans JP",sans-serif;padding-bottom:env(safe-area-inset-bottom)}
+header{padding:13px 16px 10px;display:flex;align-items:baseline;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line)}
+header strong{font-size:17px;letter-spacing:.03em}header span{color:var(--sub);font-size:11px}
+#v{position:relative;height:47vh;min-height:280px;max-height:590px;touch-action:none;overflow:hidden;background:radial-gradient(ellipse 100% 90% at 50% 35%,#36485b 0,#202d3c 48%,#151e2a 95%)}
+#v canvas{width:100%;height:100%;display:block;touch-action:none}
+#hint{position:absolute;left:12px;bottom:11px;right:12px;color:#d4ddea;font-size:12px;pointer-events:none;text-shadow:0 1px 3px #000a}
+#info{margin:10px 10px 0;border:1px solid #64758a;padding:10px 12px;border-radius:11px;background:var(--panel);font-size:14px;line-height:1.65}
+#ui{margin:9px 10px;border:1px solid var(--line);padding:10px 10px 8px;border-radius:11px;background:var(--panel)}
+.row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px 0}.row+.row{border-top:1px solid #ffffff13}
+.row .label{color:var(--sub);width:46px;flex:none;font-weight:700;font-size:13px}
+.row .choices{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+button{font:inherit;font-size:13px;min-height:40px;padding:7px 11px;border-radius:8px;background:#2e4053;color:#f7fafc;border:1px solid #546b80;cursor:pointer;line-height:1.3}
+button.on{background:#e4be70;border-color:#f7dc9d;color:#24231e;font-weight:800}
+button:focus-visible{outline:3px solid #9be0d5;outline-offset:2px}
+footer{padding:4px 12px 14px;color:var(--sub);font-size:11px;line-height:1.65}
+@media(min-width:740px){#content{max-width:900px;margin:auto}#v{height:min(55vh,580px)}button{font-size:14px;min-height:42px}}
+</style>
+</head>
+<body>
+<div id="content">
+<header><strong>PAX 駒台座 3Dプレビュー</strong><span>外部ライブラリ不要</span></header>
+<div id="v"><canvas id="view" aria-label="回転可能な駒台座の立体プレビュー"></canvas><span id="hint">ドラッグで視点回転 ／ 2本指で拡大縮小</span></div>
+<div id="info" role="status" aria-live="polite">読み込み中...</div>
+<div id="ui"></div>
+<footer>緑：正面・斜め前（補正0）／黄：側面（−3）／赤：真後ろ（−5）。前面の銘板に攻撃・防御・兵数を表示します。台座の判定扇形は駒の向きに合わせて回転します。</footer>
+</div>
+<script>
+(()=>{'use strict';
+const T={
+ I:{n:'歩兵',b:4,f:{yoko:['横陣',2,2,''],hoshi:['鋒矢陣',4,0,''],hoi:['包囲陣',1,1,'包囲支援を＋2で出せる'],taiki:['対騎陣',0,0,'敵騎兵が正面なら＋10']}},
+ A:{n:'弓兵',b:2,f:{retsu:['横列陣',-2,-2,'支援＋2（射程3）'],san:['散開陣',0,0,'支援＋1（射程3）'],han:['半月陣',0,0,'支援＋4（正面一直線の1〜3マス）']}},
+ C:{n:'騎兵',b:3,f:{hoshi:['鋒矢陣',0,-3,'突撃に＋4を追加'],tei:['梯形陣',0,0,'斜め前にも攻撃（側面扱い）'],san:['散開陣',0,3,'']}},
+ K:{n:'指揮官',b:5,f:{none:['―',0,0,'距離2以内の味方歩兵に＋1']}}
+};
+const KJ={I:'歩',A:'弓',C:'騎',K:'将'};
+const S={t:'I',f:'yoko',hp:3,d:0,o:0};
+const c=document.getElementById('view'),ctx=c.getContext('2d',{alpha:false});
+const stage=document.getElementById('v'),ui=document.getElementById('ui'),info=document.getElementById('info');
+const top=document.createElement('canvas'),tc=top.getContext('2d');top.width=top.height=512;
+const plate=document.createElement('canvas'),pc=plate.getContext('2d');plate.width=680;plate.height=210;
+let theta=.42,phi=1.02,dist=85,angle=0,requestId=0,force=false;
+let W=390,H=350,DPR=1,right,up,n,foc;
+function updateView(){const sp=Math.sin(phi),cp=Math.cos(phi),st=Math.sin(theta),ct=Math.cos(theta);
+ n=[sp*st,cp,sp*ct];right=[ct,0,-st];up=[-cp*st,sp,-cp*ct];foc=Math.min(W,H)/(2*Math.tan(40*Math.PI/360));}
+function rot(x,y,z,a=angle){const sn=Math.sin(a),cs=Math.cos(a);return [cs*x+sn*z,y,-sn*x+cs*z]}
+function project(p){const vx=p[0],vy=p[1]-5,vz=p[2],dep=dist-(vx*n[0]+vy*n[1]+vz*n[2]);const s=foc/Math.max(1,dep);
+ return {x:W*.5+(vx*right[0]+vy*right[1]+vz*right[2])*s,y:H*.55-(vx*up[0]+vy*up[1]+vz*up[2])*s,dep}}
+function polygon(points,fill,stroke){const p=points.map(project);ctx.beginPath();p.forEach((q,i)=>i?ctx.lineTo(q.x,q.y):ctx.moveTo(q.x,q.y));ctx.closePath();ctx.fillStyle=fill;ctx.fill();if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=.7;ctx.stroke()}}
+function circle(y,r,fill){const p=[];for(let i=0;i<=96;i++){const a=i*Math.PI*2/96;p.push([r*Math.cos(a),y,r*Math.sin(a)])}polygon(p,fill)}
+function cylinder(y0,y1,r0,r1,base,accent){const len=84;const panels=[];
+ for(let i=0;i<len;i++){const a0=i*2*Math.PI/len,a1=(i+1)*2*Math.PI/len,mid=(a0+a1)/2;const co=Math.cos(mid)*n[0]+Math.sin(mid)*n[2];if(co<=0)continue;
+ const shade=.65+.35*Math.max(0,(Math.cos(mid)*.5+Math.sin(mid)*.72));
+ panels.push([[[r0*Math.cos(a0),y0,r0*Math.sin(a0)],[r0*Math.cos(a1),y0,r0*Math.sin(a1)],[r1*Math.cos(a1),y1,r1*Math.sin(a1)],[r1*Math.cos(a0),y1,r1*Math.sin(a0)]],shade]);}
+ circle(y0,r0,accent);
+ for(const [pts,shade] of panels){const rgb=base.map(x=>Math.round(x*shade));polygon(pts,'rgb('+rgb.join(',')+')')}
+ circle(y1,r1,accent);
+}
+function drawTex(tex,tl,tr,bl){const a=project(tl),b=project(tr),d=project(bl);ctx.save();ctx.transform((b.x-a.x)/tex.width,(b.y-a.y)/tex.width,(d.x-a.x)/tex.height,(d.y-a.y)/tex.height,a.x,a.y);ctx.drawImage(tex,0,0);ctx.restore()}
+function drawDiskTexture(){const rd=Math.PI/180,g=tc;g.clearRect(0,0,512,512);
+ const sector=(a,b,col,lab,m)=>{g.beginPath();g.moveTo(256,256);g.arc(256,256,248,a*rd,b*rd);g.closePath();g.fillStyle=col;g.fill();g.fillStyle='#27251f';g.font='bold 54px sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(lab,256+Math.cos(m*rd)*194,256+Math.sin(m*rd)*194)};
+ sector(-157.5,-22.5,'#8cc77a','0',-90);sector(-22.5,67.5,'#ecc65a','−3',22.5);sector(67.5,112.5,'#e0705a','−5',90);sector(112.5,202.5,'#ecc65a','−3',157.5);
+ g.beginPath();g.arc(256,256,120,0,Math.PI*2);g.fillStyle='#f4ecd8';g.fill();g.strokeStyle='#b5a580';g.lineWidth=4;g.stroke();g.fillStyle='#222';g.textAlign='center';g.textBaseline='middle';g.font='bold 120px "Hiragino Sans",sans-serif';g.fillText(KJ[S.t],256,227);g.font='bold 49px "Hiragino Sans",sans-serif';g.fillText(T[S.t].f[S.f][0],256,323);
+}
+function calc(){const ty=T[S.t],fm=ty.f[S.f],pen=3-S.hp;return {ty,fm,atk:ty.b+fm[1]-pen,def:ty.b+fm[2]-pen,pen}}
+function drawPlate(){const {atk,def}=calc();pc.clearRect(0,0,plate.width,plate.height);pc.fillStyle='#26221e';pc.fillRect(0,0,680,210);pc.strokeStyle='#d0b57d';pc.lineWidth=10;pc.strokeRect(6,6,668,198);pc.fillStyle='#f6e9ce';pc.textAlign='center';pc.textBaseline='middle';pc.font='bold 68px "Hiragino Sans",sans-serif';pc.fillText('攻 '+atk+'　防 '+def,340,85);pc.font='bold 53px sans-serif';pc.fillText('●'.repeat(S.hp)+'○'.repeat(3-S.hp),340,163)}
+function render(){requestId=0;if(!ctx)return;const target=-S.d*Math.PI/2;let delta=Math.atan2(Math.sin(target-angle),Math.cos(target-angle));if(Math.abs(delta)>.001){angle+=delta*.23;force=true}else{angle=target;force=false}updateView();
+ const sky=ctx.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#2b3c4d');sky.addColorStop(1,'#17212d');ctx.fillStyle=sky;ctx.fillRect(0,0,W,H);
+ // Ground shadow
+ ctx.save();ctx.fillStyle='#080b1190';ctx.beginPath();for(let i=0;i<=70;i++){const a=2*Math.PI*i/70,p=project([23*Math.cos(a),-.9,23*Math.sin(a)]);i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)}ctx.closePath();ctx.fill();ctx.restore();
+ // Red / blue lower disk, upper cream ring and rotating top decals
+ const base=S.o?[44,108,177]:[190,61,48],edge=S.o?'#3f8dd6':'#d35b4c';
+ cylinder(0,5,18,17,base,edge);
+ // Arrow sits between base and rotating cream disc
+ polygon([rot(-3,5.3,-14),rot(0,5.3,-21),rot(3,5.3,-14)],'#202126');
+ cylinder(5.04,8.02,14,14,[223,212,182],'#f0e5cc');
+ drawTex(top,rot(-14,8.06,-14),rot(14,8.06,-14),rot(-14,8.06,14));
+ drawTex(plate,[-13,7.7,17.2],[13,7.7,17.2],[-13,.7,21]);
+ if(force)startFrame();}
+function startFrame(){if(!requestId)requestId=requestAnimationFrame(render)}
+function refresh(){drawDiskTexture();drawPlate();const {ty,fm,atk,def,pen}=calc();
+ info.innerHTML='<b>'+ty.n+'　'+fm[0]+'</b>　攻撃 <b>'+atk+'</b> ／ 防御 <b>'+def+'</b>（基礎'+ty.b+'＋陣形'+fm[1]+'/'+fm[2]+'−兵数'+pen+'）'+(fm[3]?'<br>'+fm[3]:'');
+ ui.replaceChildren();function row(label,choices,key){const section=document.createElement('div');section.className='row';const caption=document.createElement('span');caption.className='label';caption.textContent=label;const group=document.createElement('div');group.className='choices';for(const [text,value] of choices){const b=document.createElement('button');b.type='button';b.textContent=text;if(S[key]===value)b.classList.add('on');b.setAttribute('aria-pressed',String(S[key]===value));b.addEventListener('click',()=>{S[key]=value;if(key==='t')S.f=Object.keys(T[value].f)[0];refresh()});group.appendChild(b)}section.append(caption,group);ui.appendChild(section)}
+ row('兵種',Object.keys(T).map(k=>[KJ[k],k]),'t');row('陣形',Object.keys(T[S.t].f).map(k=>[T[S.t].f[k][0],k]),'f');row('兵数',[[3,3],[2,2],[1,1]],'hp');row('向き',[['↑',0],['→',1],['↓',2],['←',3]],'d');row('陣営',[['赤',0],['青',1]],'o');startFrame()}
+function resize(){const r=stage.getBoundingClientRect();W=Math.max(1,Math.round(r.width));H=Math.max(1,Math.round(r.height));DPR=Math.min(window.devicePixelRatio||1,2);c.width=Math.round(W*DPR);c.height=Math.round(H*DPR);ctx.setTransform(DPR,0,0,DPR,0,0);startFrame()}
+const pointers=new Map();let lastPinch=0;
+c.addEventListener('pointerdown',e=>{pointers.set(e.pointerId,[e.clientX,e.clientY]);try{c.setPointerCapture(e.pointerId)}catch{}lastPinch=0});
+c.addEventListener('pointerup',e=>{pointers.delete(e.pointerId);lastPinch=0});c.addEventListener('pointercancel',e=>{pointers.delete(e.pointerId);lastPinch=0});
+c.addEventListener('pointermove',e=>{const prev=pointers.get(e.pointerId);if(!prev)return;if(pointers.size===1){theta-=(e.clientX-prev[0])*.012;phi=Math.max(.22,Math.min(1.46,phi-(e.clientY-prev[1])*.01))}pointers.set(e.pointerId,[e.clientX,e.clientY]);if(pointers.size===2){const p=[...pointers.values()],pinch=Math.hypot(p[0][0]-p[1][0],p[0][1]-p[1][1]);if(lastPinch)dist=Math.max(42,Math.min(160,dist*lastPinch/Math.max(pinch,1)));lastPinch=pinch}startFrame()});
+c.addEventListener('wheel',e=>{e.preventDefault();dist=Math.max(42,Math.min(160,dist+e.deltaY*.045));startFrame()},{passive:false});
+window.addEventListener('resize',resize);if('ResizeObserver' in window)new ResizeObserver(resize).observe(stage);
+refresh();resize();
+})();
+</script>
+</body>
+</html>
