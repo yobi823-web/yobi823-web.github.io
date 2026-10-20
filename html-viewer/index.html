@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0c121e">
+<meta name="description" content="HTMLファイルを選ぶだけ。iPhone・PCのブラウザで安全にプレビューできます。アップロード不要。">
+<title>HTML Viewer — ブラウザでHTMLを開く</title>
+<style>
+:root{color-scheme:dark;--bg:#0c121e;--surface:#131d2b;--surface2:#192535;--text:#ecf2fa;--muted:#91a2b8;--stroke:#2b3a4d;--accent:#64e0bc;--accent2:#b7f8e4;--danger:#ffaaa8}
+*{box-sizing:border-box}
+html{height:100%;background:var(--bg)}
+body{min-height:100%;height:100dvh;margin:0;display:flex;flex-direction:column;background:var(--bg);color:var(--text);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",Segoe UI,sans-serif;overflow:hidden}
+button,select,textarea{font:inherit}button{cursor:pointer;transition:background .15s,border-color .15s,transform .15s}button:active{transform:scale(.98)}button:focus-visible,select:focus-visible,textarea:focus-visible,.filedrop:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+button:disabled{opacity:.45;cursor:not-allowed}
+.topbar{height:70px;min-height:70px;padding:0 clamp(16px,3vw,40px);border-bottom:1px solid var(--stroke);display:flex;align-items:center;justify-content:space-between;gap:14px;background:#101825;z-index:5}
+.brand{display:flex;align-items:center;gap:13px;min-width:0;white-space:nowrap}.logo{width:37px;height:37px;display:grid;place-items:center;flex:none;color:#082920;background:var(--accent);font-size:16px;font-weight:900;letter-spacing:-2px;border-radius:11px}
+.brandtext{font-size:17px;font-weight:780;letter-spacing:-.5px}.brandtext span{display:block;font-size:10px;letter-spacing:1.6px;color:var(--muted);font-weight:700;margin-top:0}
+.top-actions{display:flex;align-items:center;gap:9px;min-width:0}.secure{display:flex;gap:7px;align-items:center;color:var(--muted);font-size:12px;white-space:nowrap;margin-right:12px}.secure:before{content:"";width:7px;height:7px;border-radius:99px;background:var(--accent);box-shadow:0 0 0 3px #64e0bc20}
+button.pill{min-height:37px;padding:0 13px;border:1px solid var(--stroke);background:var(--surface2);border-radius:10px;color:var(--text);white-space:nowrap;font-weight:650}
+button.pill:hover{background:#24364a}button.pill.primary{border-color:var(--accent);background:var(--accent);color:#0c201a}
+#home{min-height:0;overflow:auto;flex:1;display:flex;align-items:center;justify-content:center;padding:40px 22px 55px}
+.hero{width:min(680px,100%);text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;border:1px solid #285349;color:var(--accent2);background:#16382f5e;border-radius:99px;font-weight:750;font-size:11px;letter-spacing:1.5px;padding:7px 14px;margin-bottom:23px}
+.hero h1{font-size:clamp(33px,5vw,58px);line-height:1.23;letter-spacing:-1.8px;margin:0 0 18px;font-weight:840}.hero h1 strong{color:var(--accent)}
+.lead{color:var(--muted);font-size:clamp(13px,2vw,16px);line-height:1.95;margin:0 auto 29px}
+.filedrop{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;min-height:245px;padding:28px 24px;border:2px dashed #40566a;border-radius:23px;background:linear-gradient(155deg,#182839,#111c2a 75%);cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
+.filedrop:hover,.filedrop.drag{border-color:var(--accent);background:#19352e;transform:translateY(-1px)}
+.upload-icon{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;background:#27443e;color:var(--accent);font-size:31px;font-weight:500;margin-bottom:5px}
+.filedrop b{font-size:17px}.filedrop p{margin:0;font-size:12px;color:var(--muted)}
+.ghostlink{margin:21px auto 0;display:flex;justify-content:center;gap:9px;align-items:center;flex-wrap:wrap}
+button.textbtn{border:0;background:transparent;color:var(--accent);text-decoration:underline;text-underline-offset:4px;padding:10px;font-weight:700}
+.divider{color:#52657a}.note{font-size:12px;color:var(--muted);margin:25px auto 0;line-height:1.9}
+#studio{display:none;min-height:0;flex:1;flex-direction:column}#studio.show{display:flex}#home.hide{display:none}
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:65px;padding:10px clamp(12px,2vw,26px);border-bottom:1px solid var(--stroke);background:#101825}
+.filemeta{display:flex;min-width:0;align-items:center;gap:11px}.filebadge{width:37px;height:37px;background:#24394a;color:var(--accent);display:grid;place-items:center;border-radius:10px;font-weight:900;font-size:11px;flex:none}
+.filename{font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:360px}.filehint{color:var(--muted);font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tools{display:flex;align-items:center;gap:7px;flex:none}.tools .pill{min-height:35px;padding:0 10px;font-size:12px}
+.sizebox{height:35px;display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--stroke);border-radius:9px;padding:0 8px;color:var(--muted);font-size:11px}select{background:transparent;color:var(--text);border:0;outline:0;font-size:12px;max-width:110px}option{background:var(--surface2)}
+.stage{position:relative;flex:1;min-height:0;display:flex;flex-direction:column;background:#202936}
+.preview-info{padding:6px 15px;min-height:29px;background:#0e1622;display:flex;align-items:center;justify-content:space-between;color:#94a7b9;font-size:11px;gap:12px}
+.preview-info b{font-size:11px;color:var(--accent);font-weight:750}.frame-scroll{flex:1;min-height:0;overflow:auto;display:flex;align-items:stretch;justify-content:center}
+#preview{border:none;display:block;background:#fff;color:#000;flex:1;min-height:100%;width:100%;max-width:100%}
+#preview.mobile{min-width:390px;max-width:390px;flex:0 0 390px;box-shadow:0 0 0 1px #a9b9c340,0 14px 40px #0005}
+#preview.desktop{min-width:1280px;max-width:1280px;flex:0 0 1280px;box-shadow:0 0 0 1px #a9b9c340,0 14px 40px #0005}
+.editor{display:none;flex:1;min-height:0;flex-direction:column;background:var(--surface)}.editor.show{display:flex}.stage.editor-open .frame-scroll,.stage.editor-open .preview-info{display:none}
+.editor-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px;color:var(--muted);border-bottom:1px solid var(--stroke)}.editor-head strong{color:var(--text)}
+.editor textarea{flex:1;min-height:0;width:100%;background:#101724;border:0;color:#ddede4;padding:18px 22px;outline:none;font:12px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;resize:none;tab-size:2}
+.editor-foot{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:10px 16px;border-top:1px solid var(--stroke)}
+body.focus .topbar,body.focus .toolbar,body.focus .preview-info{display:none!important}body.focus #studio{height:100dvh}body.focus #preview{min-height:100%;}body.focus .frame-scroll{height:100%}
+.focus-close{display:none;position:fixed;right:calc(14px + env(safe-area-inset-right));top:calc(12px + env(safe-area-inset-top));z-index:12;background:#0e1722df;color:#fff;border:1px solid #aaa8;border-radius:99px;padding:10px 16px;font-size:12px;backdrop-filter:blur(8px)}body.focus .focus-close{display:block}
+#savedPanel{position:fixed;inset:0;z-index:25;display:none;align-items:center;justify-content:center;background:#03070dcc;padding:16px;backdrop-filter:blur(5px)}#savedPanel.open{display:flex}.modal{width:min(520px,100%);max-height:min(85dvh,720px);display:flex;flex-direction:column;border:1px solid var(--stroke);background:#162233;border-radius:19px;box-shadow:0 35px 90px #0007;overflow:hidden}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--stroke)}.modal h2{font-size:17px;margin:0}.modal-body{overflow:auto;padding:10px 16px 18px}.stored{display:flex;align-items:center;gap:10px;padding:11px 4px;border-bottom:1px solid var(--stroke)}.stored-name{flex:1;min-width:0;overflow:hidden}.stored-name b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.stored-name small{color:var(--muted)}.stored button{padding:9px 12px;border-radius:9px;border:1px solid var(--stroke);background:#203246;color:var(--text)}.stored button.delete{color:var(--danger)}
+#toast{position:fixed;z-index:60;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translateX(-50%);max-width:92vw;background:#c5f9e7;color:#122d23;padding:12px 18px;border-radius:13px;box-shadow:0 8px 36px #0007;font-weight:700;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;white-space:normal}#toast.show{opacity:1}
+@media(max-width:800px){.topbar{min-height:60px;height:60px;padding:0 12px}.brand{gap:8px}.logo{width:32px;height:32px;font-size:13px;border-radius:9px}.brandtext{font-size:14px}.brandtext span{font-size:8px}.secure{display:none}.top-actions{gap:6px}.top-actions button{padding:0 9px!important;min-height:35px;font-size:12px}.toolbar{min-height:unset;align-items:stretch;flex-direction:column;gap:9px;padding:9px 12px}.filebadge{width:30px;height:30px;border-radius:7px}.filehint{display:none}.filemeta{min-height:30px}.filename{max-width:calc(100vw - 74px)}.tools{overflow:auto;scrollbar-width:none;gap:6px;padding-bottom:2px}.tools::-webkit-scrollbar{display:none}.tools .pill{flex:none}.sizebox{flex:none}.preview-info{padding:5px 10px;font-size:10px}.hero h1{font-size:37px;letter-spacing:-1px}.hero .lead{font-size:13px}.filedrop{min-height:222px}.editor textarea{font-size:12px;padding:12px}.topbar .top-actions button:nth-child(2){display:none}}
+@media(max-height:650px){#home{align-items:flex-start;padding-top:17px}.eyebrow{margin-bottom:12px}.hero h1{font-size:31px;margin-bottom:9px}.lead{margin-bottom:15px}.filedrop{min-height:160px}.upload-icon{width:38px;height:38px;font-size:22px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">&lt;/&gt;</div><div class="brandtext">HTML VIEWER<span>YOUR FILE. YOUR BROWSER.</span></div></div>
+  <div class="top-actions"><span class="secure">ファイルをサーバーに送信しません</span><button class="pill" id="savedBtn" type="button">保存済み</button><button class="pill primary" id="chooseTop" type="button">＋ HTMLを開く</button></div>
+</header>
+<main id="home">
+  <div class="hero">
+    <div class="eyebrow">LOCAL · PRIVATE · INSTANT</div>
+    <h1>HTMLを、<br><strong>そのまま開く。</strong></h1>
+    <p class="lead">iPhoneでも、PCでも。<br>HTMLファイルを選ぶだけで、動作するページをChrome内に表示します。</p>
+    <div class="filedrop" id="dropZone" role="button" tabindex="0" aria-label="HTMLファイルを選ぶ">
+      <div class="upload-icon">⇧</div><b>ここをタップしてHTMLを選択</b><p>またはファイルをドラッグ＆ドロップ</p><p>.html / .htm</p>
+    </div>
+    <div class="ghostlink"><button type="button" class="textbtn" id="pasteBtn">HTMLコードを貼り付ける</button><span class="divider">｜</span><button type="button" class="textbtn" id="demoBtn">サンプルを試す</button></div>
+    <p class="note">ファイルは端末内で処理。アップロード・ログイン不要。<br>外部ライブラリを使うHTMLにはインターネット接続が必要です。</p>
+  </div>
+</main>
+<section id="studio" aria-label="HTMLプレビュー">
+  <div class="toolbar"><div class="filemeta"><div class="filebadge">HTML</div><div style="min-width:0"><div class="filename" id="filename">無題.html</div><div class="filehint">プレビューを隔離して実行 · ファイルは送信されません</div></div></div>
+    <div class="tools">
+      <label class="sizebox">幅<select id="deviceWidth" aria-label="プレビューの幅"><option value="auto">自動</option><option value="mobile">スマホ</option><option value="desktop">PC</option></select></label>
+      <button type="button" class="pill" id="editBtn">コード編集</button>
+      <button type="button" class="pill" id="reloadBtn">再読み込み</button>
+      <button type="button" class="pill" id="storeBtn">端末に保存</button>
+      <button type="button" class="pill" id="downloadBtn">HTML書き出し</button>
+      <button type="button" class="pill primary" id="focusBtn">⛶ 画面を広げる</button>
+    </div>
+  </div>
+  <div class="stage" id="stage">
+    <div class="preview-info"><div>● <b>プレビュー表示中</b> <span id="hint">JavaScript対応</span></div><span>HTMLは保護されたフレーム内で実行</span></div>
+    <div class="frame-scroll" id="frameScroll"><iframe id="preview" title="HTMLプレビュー" sandbox="allow-scripts allow-forms allow-modals allow-pointer-lock allow-downloads allow-popups" allow="fullscreen" referrerpolicy="no-referrer"></iframe></div>
+    <div class="editor" id="editor"><div class="editor-head"><div><strong>HTMLソース</strong><br>編集後に「変更をプレビュー」を押してください</div><button type="button" class="pill" id="cancelEdit">閉じる</button></div><textarea id="source" aria-label="HTMLソースコード" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" placeholder="ここにHTMLコードを貼り付けてください"></textarea><div class="editor-foot"><button type="button" class="pill" id="resetEdit">編集を取り消す</button><button type="button" class="pill primary" id="applyEdit">変更をプレビュー →</button></div></div>
+  </div>
+</section>
+<button type="button" class="focus-close" id="focusClose">× 閉じる</button>
+<div id="savedPanel" role="dialog" aria-modal="true" aria-label="保存済みのHTML"><div class="modal"><div class="modal-header"><h2>この端末に保存したHTML</h2><button class="pill" id="closeSaved" type="button">閉じる</button></div><div class="modal-body" id="savedList"></div></div></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" accept=".html,.htm,text/html" id="fileInput" hidden>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+let current={html:'',name:'無題.html'},focusMode=false,editorOpen=false,toastTimer;
+const toast=(s)=>{const e=$('toast');e.textContent=s;e.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>e.classList.remove('show'),3300)};
+function showStudio(){ $('home').classList.add('hide');$('studio').classList.add('show') }
+function openHtml(html,name){current={html,name:name||'無題.html'};showStudio();closeEditor();exitFocus();$('filename').textContent=current.name;$('source').value=html;$('deviceWidth').value='auto';changeWidth();render()}
+function render(){const frame=$('preview');frame.srcdoc=current.html;$('hint').textContent='JavaScript対応 · ブラウザ内で実行'}
+async function loadFile(file){if(!file)return;if(!/\.(html?|HTML?)$/.test(file.name)&&file.type!=='text/html'){toast('HTMLファイル（.html / .htm）を選択してください');return}if(file.size>25*1024*1024){toast('25MB以下のHTMLを選択してください');return}
+ try{const raw=await file.arrayBuffer();const head=new TextDecoder('latin1').decode(raw.slice(0,4096));const declared=head.match(/<meta[^>]+charset\s*=\s*["']?\s*([\w-]+)/i)?.[1]||head.match(/charset\s*=\s*([\w-]+)/i)?.[1]||'utf-8';let label=/^(shift[_-]?jis|sjis|windows-31j|x-sjis)$/i.test(declared)?'shift_jis':declared;let html;try{html=new TextDecoder(label).decode(raw)}catch{html=new TextDecoder('utf-8').decode(raw)}openHtml(html,file.name);toast(file.name+' を開きました')}catch(e){console.error(e);toast('ファイルを読み込めませんでした')}}
+function closeEditor(){editorOpen=false;$('stage').classList.remove('editor-open');$('editor').classList.remove('show');$('editBtn').textContent='コード編集'}
+function showEditor(blank=false){showStudio();if(blank){current={html:'',name:'新規HTML.html'};$('filename').textContent=current.name;$('source').value='<!doctype html>\n<html lang="ja">\n<head><meta charset="utf-8"><title>新規HTML</title></head>\n<body>\n  \n</body>\n</html>'}else{$('source').value=current.html}editorOpen=true;$('stage').classList.add('editor-open');$('editor').classList.add('show');$('editBtn').textContent='プレビューへ';$('source').focus()}
+function changeWidth(){$('preview').classList.remove('mobile','desktop');const w=$('deviceWidth').value;if(w!=='auto')$('preview').classList.add(w)}
+function enterFocus(){if(editorOpen){closeEditor();render()}focusMode=true;document.body.classList.add('focus');$('deviceWidth').value='auto';changeWidth()}
+function exitFocus(){if(!focusMode)return;focusMode=false;document.body.classList.remove('focus')}
+function download(){const blob=new Blob([current.html],{type:'text/html;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=current.name.endsWith('.html')||current.name.endsWith('.htm')?current.name:current.name+'.html';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000)}
+// IndexedDB is only used when the user explicitly taps "端末に保存".
+const openDb=()=>new Promise((resolve,reject)=>{const q=indexedDB.open('html-viewer-local',1);q.onupgradeneeded=()=>q.result.createObjectStore('files',{keyPath:'id'});q.onsuccess=()=>resolve(q.result);q.onerror=()=>reject(q.error)});
+async function allSaved(){const db=await openDb();return new Promise((resolve,reject)=>{const t=db.transaction('files','readonly');const q=t.objectStore('files').getAll();q.onsuccess=()=>resolve(q.result.sort((a,b)=>b.date-a.date));q.onerror=()=>reject(q.error);t.oncomplete=()=>db.close()})}
+async function save(){try{const db=await openDb(),item={id:String(Date.now())+'-'+Math.random().toString(36).slice(2,7),name:current.name,html:current.html,date:Date.now()};await new Promise((resolve,reject)=>{const t=db.transaction('files','readwrite');t.objectStore('files').put(item);t.oncomplete=resolve;t.onerror=()=>reject(t.error)});db.close();toast('この端末に保存しました')}catch(e){console.error(e);toast('保存できませんでした。プライベートモードの制限などを確認してください')}}
+async function removeSaved(id){try{const db=await openDb();await new Promise((resolve,reject)=>{const t=db.transaction('files','readwrite');t.objectStore('files').delete(id);t.oncomplete=resolve;t.onerror=()=>reject(t.error)});db.close();await showSaved();toast('削除しました')}catch{toast('削除に失敗しました')}}
+async function showSaved(){$('savedPanel').classList.add('open');const box=$('savedList');box.replaceChildren();try{const arr=await allSaved();if(!arr.length){const p=document.createElement('p');p.textContent='保存されたファイルはありません。「端末に保存」すると、次回もここから開けます。';p.style.color='var(--muted)';box.append(p);return}for(const item of arr){const row=document.createElement('div');row.className='stored';const meta=document.createElement('div');meta.className='stored-name';const b=document.createElement('b');b.textContent=item.name;const small=document.createElement('small');small.textContent=new Date(item.date).toLocaleString('ja-JP');meta.append(b,small);const open=document.createElement('button');open.type='button';open.textContent='開く';open.onclick=()=>{openHtml(item.html,item.name);$('savedPanel').classList.remove('open')};const del=document.createElement('button');del.type='button';del.className='delete';del.textContent='削除';del.onclick=()=>{if(confirm('「'+item.name+'」をこの端末から削除しますか？'))removeSaved(item.id)};row.append(meta,open,del);box.append(row)}}catch(e){const p=document.createElement('p');p.textContent='このブラウザでは保存済みファイルを読み込めませんでした。';box.append(p)}}
+$('chooseTop').addEventListener('click',()=>$('fileInput').click());$('dropZone').addEventListener('click',()=>$('fileInput').click());$('dropZone').addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('fileInput').click()}});
+$('fileInput').addEventListener('change',async e=>{await loadFile(e.target.files?.[0]);e.target.value=''});
+$('pasteBtn').onclick=()=>showEditor(true);
+$('demoBtn').onclick=()=>openHtml(`<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:linear-gradient(145deg,#e0f4ee,#e6ebf6);font:16px system-ui;color:#1d3440}.card{background:#fff;padding:35px;text-align:center;max-width:360px;border-radius:23px;box-shadow:0 20px 55px #2448  }.ball{width:95px;height:95px;border-radius:23px;margin:0 auto 20px;background:linear-gradient(145deg,#66ddbe,#356fd7);animation:spin 4s ease-in-out infinite;box-shadow:0 12px 25px #366c9d4d}@keyframes spin{50%{transform:rotate(135deg) scale(1.1)}}button{border:0;background:#123b4a;color:#fff;border-radius:12px;padding:13px 19px;cursor:pointer}</style></head><body><div class="card"><div class="ball"></div><h1>HTMLが動いています</h1><p>CSSアニメーションとJavaScriptのテストです。</p><button onclick="this.textContent='クリックできました！'">クリックしてみる</button></div></body></html>`,'サンプル.html');
+$('editBtn').onclick=()=>editorOpen?closeEditor():showEditor();$('cancelEdit').onclick=closeEditor;$('resetEdit').onclick=()=>{$('source').value=current.html;toast('編集中の変更を取り消しました')};$('applyEdit').onclick=()=>{current.html=$('source').value;closeEditor();render();toast('プレビューを更新しました')};
+$('reloadBtn').onclick=()=>{if(editorOpen)closeEditor();render();toast('プレビューを再読み込みしました')};$('deviceWidth').onchange=changeWidth;
+$('focusBtn').onclick=enterFocus;$('focusClose').onclick=exitFocus;
+$('storeBtn').onclick=save;$('downloadBtn').onclick=download;$('savedBtn').onclick=showSaved;
+$('closeSaved').onclick=()=>$('savedPanel').classList.remove('open');$('savedPanel').addEventListener('click',e=>{if(e.target===$('savedPanel'))$('savedPanel').classList.remove('open')});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){exitFocus();$('savedPanel').classList.remove('open')}});
+let dragDepth=0;window.addEventListener('dragenter',e=>{if([...e.dataTransfer?.types||[]].includes('Files')){e.preventDefault();dragDepth++;$('dropZone').classList.add('drag')}});window.addEventListener('dragover',e=>{if([...e.dataTransfer?.types||[]].includes('Files'))e.preventDefault()});window.addEventListener('dragleave',e=>{dragDepth--;if(dragDepth<=0){dragDepth=0;$('dropZone').classList.remove('drag')}});window.addEventListener('drop',e=>{e.preventDefault();dragDepth=0;$('dropZone').classList.remove('drag');loadFile(e.dataTransfer?.files?.[0])});
+})();
+</script>
+</body>
+</html>
