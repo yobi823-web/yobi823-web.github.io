@@ -150,24 +150,58 @@ async function importFiles(fs){
     try{await put(x);tracks.push(x);n++}catch(e){console.error(e);toast('保存容量が足りない可能性があります');break}}
   tracks.sort((a,b)=>a.createdAt-b.createdAt);render();toast(n?n+'曲追加しました':'同じファイルは追加済みです');if(!currentId&&tracks.length)load(tracks[0].id,false)
 }
+async function resumeFromRemote(){
+  if(!currentId){const q=queue();if(q.length)load(q[0],false)}
+  if(!currentId)return;
+  const pos=Number.isFinite(audio.currentTime)?audio.currentTime:0;
+  try{
+    await audio.play();
+  }catch(e){
+    const t=tracks.find(x=>x.id===currentId);
+    if(!t)return;
+    try{
+      if(currentUrl)URL.revokeObjectURL(currentUrl);
+      currentUrl=URL.createObjectURL(t.blob);
+      audio.src=currentUrl;
+      audio.load();
+      audio.addEventListener('loadedmetadata',async function restore(){
+        audio.removeEventListener('loadedmetadata',restore);
+        if(Number.isFinite(audio.duration)&&pos>0)audio.currentTime=Math.min(pos,Math.max(0,audio.duration-.05));
+        audio.playbackRate=speeds[speedIndex];
+        try{await audio.play()}catch(err){console.error(err)}
+      },{once:false});
+    }catch(err){console.error(err)}
+  }
+}
+function syncMediaState(){
+  if(!('mediaSession'in navigator))return;
+  try{
+    if(!currentId)navigator.mediaSession.playbackState='none';
+    else navigator.mediaSession.playbackState=audio.paused?'paused':'playing';
+  }catch(e){}
+}
 function media(t){
   if(!('mediaSession'in navigator))return;
   try{
     const p=activePlaylist();
     navigator.mediaSession.metadata=new MediaMetadata({title:name(t.name),artist:'端末内の音声',album:p?p.name:'M4A Player'});
-    navigator.mediaSession.setActionHandler('play',()=>audio.play());navigator.mediaSession.setActionHandler('pause',()=>audio.pause());
-    navigator.mediaSession.setActionHandler('previoustrack',()=>{const x=choose(-1);if(x)load(x,true)});navigator.mediaSession.setActionHandler('nexttrack',()=>{const x=choose(1);if(x)load(x,true)});
+    navigator.mediaSession.setActionHandler('play',()=>{resumeFromRemote()});
+    navigator.mediaSession.setActionHandler('pause',()=>{audio.pause();syncMediaState()});
+    navigator.mediaSession.setActionHandler('previoustrack',()=>{const x=choose(-1);if(x)load(x,true)});
+    navigator.mediaSession.setActionHandler('nexttrack',()=>{const x=choose(1);if(x)load(x,true)});
     navigator.mediaSession.setActionHandler('seekto',e=>{if(Number.isFinite(e.seekTime))audio.currentTime=Math.min(e.seekTime,audio.duration||e.seekTime)});
     navigator.mediaSession.setActionHandler('seekbackward',e=>audio.currentTime=Math.max(0,audio.currentTime-(e.seekOffset||10)));
     navigator.mediaSession.setActionHandler('seekforward',e=>audio.currentTime=Math.min(audio.duration||Infinity,audio.currentTime+(e.seekOffset||10)));
+    syncMediaState();
   }catch(e){}
 }
 function load(i,auto=false){
   const t=tracks.find(x=>x.id===i);if(!t)return;if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=URL.createObjectURL(t.blob);currentId=i;audio.src=currentUrl;audio.playbackRate=speeds[speedIndex];
   $('#now').textContent=name(t.name);document.title=name(t.name)+' · M4A Player';media(t);render();if(auto)audio.play().catch(()=>toast('再生ボタンを押してください'))
 }
-function toggle(){if(!currentId){const q=queue();if(q.length)load(q[0],false)}if(!currentId)return toast('音声を追加してください');audio.paused?audio.play().catch(()=>toast('再生できませんでした')):audio.pause()}
+function toggle(){if(!currentId){const q=queue();if(q.length)load(q[0],false)}if(!currentId)return toast('音声を追加してください');audio.paused?resumeFromRemote().catch(()=>toast('再生できませんでした')):audio.pause()}
 function update(){
+  syncMediaState();
   $('#play').textContent=audio.paused?'▶':'❚❚';$('#cur').textContent=time(audio.currentTime);$('#dur').textContent=time(audio.duration);
   seek.value=Number.isFinite(audio.duration)&&audio.duration>0?Math.round(audio.currentTime/audio.duration*1000):0;
   document.querySelectorAll('.track').forEach(r=>{const a=r.dataset.id===currentId;r.classList.toggle('active',a);const b=r.querySelector('.mini');if(b)b.textContent=a&&!audio.paused?'❚❚':'▶'});
@@ -211,8 +245,8 @@ $('#listclose').onclick=closeListPicker;$('#listbg').onclick=e=>{if(e.target===$
 
 $('#clear').onclick=async()=>{if(!tracks.length||!confirm('ライブラリの音声をすべて削除しますか？\\nプレイリストも空になります。'))return;audio.pause();audio.removeAttribute('src');audio.load();if(currentUrl)URL.revokeObjectURL(currentUrl);currentUrl=null;currentId=null;await clearDB();tracks=[];playlists.forEach(p=>p.tracks=[]);savePlaylists();$('#now').textContent='音声を選択してください';document.title='M4A Player';render();update();toast('ライブラリを空にしました')};
 
-['play','pause','timeupdate','loadedmetadata','ratechange'].forEach(e=>audio.addEventListener(e,update));
-audio.addEventListener('ended',()=>{if(repeatMode===2){audio.currentTime=0;audio.play();return}const q=queue(),i=q.indexOf(currentId);if(!shuffle&&repeatMode===0&&i===q.length-1){update();return}const x=choose(1);if(x)load(x,true)});
+['play','pause','playing','timeupdate','loadedmetadata','ratechange','emptied','stalled','suspend'].forEach(e=>audio.addEventListener(e,update));
+audio.addEventListener('ended',()=>{syncMediaState();if(repeatMode===2){audio.currentTime=0;resumeFromRemote();return}const q=queue(),i=q.indexOf(currentId);if(!shuffle&&repeatMode===0&&i===q.length-1){update();return}const x=choose(1);if(x)load(x,true)});
 audio.addEventListener('error',()=>toast('この音声はSafariで再生できない形式かもしれません'));
 document.addEventListener('dragover',e=>e.preventDefault());document.addEventListener('drop',e=>{e.preventDefault();if(e.dataTransfer&&e.dataTransfer.files.length)importFiles(e.dataTransfer.files)});
 
